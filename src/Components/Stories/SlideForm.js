@@ -25,10 +25,7 @@ export default function SlideForm(props) {
     }
 
     useEffect(() => {
-        //if (chapter)
         setLocalChapter(chapter)
-        //else
-        //    setLocalChapter(chapterSchema)
         fetchData(ENDPOINT.STORIES + `/${props.match.params.storyId}`)
             .then((data) => {
                 setLocalStory(data)
@@ -43,14 +40,14 @@ export default function SlideForm(props) {
 
 
     const onSave = () => {
-        console.log(localChapter)
+        console.log(chapter)
         postData(ENDPOINT.STORIES + `/${props.match.params.storyId}/chapters`, {
-            title: localChapter.title,
-            description: localChapter.description,
+            title: chapter.title,
+            description: chapter.description,
         }).then((data) => {
 
             postData(ENDPOINT.STORIES + `/${props.match.params.storyId}/chapters/${data.chapters[data.chapters.length - 1].id}/assets`, {
-                ...localChapter.assets[0]
+                ...chapter.assets[0]
             }).then(() => {
                 props.history.push(`/editor/${props.match.params.storyId}`)
             }).catch(ex => console.log(ex))
@@ -63,6 +60,12 @@ export default function SlideForm(props) {
         showAssetsInsideStoryForm
             ? toggleAssetsInsideStoryForm()
             : props.history.push('/workspace')
+    }
+
+    const goBackStory = () => {
+        showAssetsInsideStoryForm
+            ? toggleAssetsInsideStoryForm()
+            : props.history.push(`/editor/${props.match.params.storyId}`)
     }
 
     const getStoryCategory = () => {
@@ -100,6 +103,18 @@ export default function SlideForm(props) {
         toggleAssetsInsideStoryForm()
     }
 
+    const getChapterAssets = () => {
+        console.log('local chapter assets')
+        console.log(chapter)
+        if (chapter && chapter.assets)
+            return chapter.assets.map(asset => {
+                return <Col md={6} className="p-9">
+                    <img style={{ width: 100 + '%' }} alt="" src={asset.thumbnail} />
+                </Col>
+            })
+
+    }
+
     const getContent = () => {
         return <Container className="mt-5">
             <Row>
@@ -123,6 +138,11 @@ export default function SlideForm(props) {
                                 <Form.Label className="body-secondary" style={{ fontWeight: 500 }}>Chapter Description</Form.Label>
                                 <Form.Control value={localChapter.description} onChange={(e) => setLocalChapter({ ...localChapter, description: e.target.value })} as="textarea" rows="3" />
                             </Form.Group>
+                            <Container className="mt-5">
+                                <Row>
+                                    {getChapterAssets()}
+                                </Row>
+                            </Container>
                             <Form.Group>
                                 <Button onClick={onAssetsLoad} className="primary">Select Asset</Button>
                             </Form.Group>
@@ -139,7 +159,7 @@ export default function SlideForm(props) {
         <>
             {!showAssetsInsideStoryForm ? getContent() : <Assets onAssetClick={onAssetClick} />}
             {showAssetsInsideStoryForm && <NavButtons onPrevious={goBack} />}
-            {!showAssetsInsideStoryForm && <NavButtons onPrevious={goBack} hasSave={localChapter.title && localChapter.description && localChapter.assets.length > 0} onSave={onSave} />}
+            {!showAssetsInsideStoryForm && <NavButtons onPrevious={goBackStory} hasSave={chapter.title && chapter.description && chapter.assets.length > 0} onSave={onSave} />}
         </>
     )
 }
