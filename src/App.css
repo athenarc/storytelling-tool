@@ -1,0 +1,175 @@
+body {
+  background: #F1F1F1 0% 0% no-repeat padding-box;
+}
+
+.bg-secondary {
+  background-color: #D6D5D5 !important
+}
+.bg-primary {
+  background-color: #B89122 !important
+}
+
+.max-content {
+  max-width: max-content;
+}
+/* Typography */
+
+.f-12 {font-size: 12px}
+.f-14 {font-size: 14px}
+.f-16 {font-size: 16px}
+.f-18 {font-size: 18px}
+
+.color-primary {
+  color: #B89122 !important;
+}
+.color-secondary {
+  color: #707070 !important;
+}
+
+.header-primary {
+  text-align: left;
+  /* font: 500 40px/48px Museo Sans; */
+  font-weight: 500;
+  font-family: museo-sans, sans-serif;
+  letter-spacing: 0;
+  color: #B89122;
+  opacity: 1;
+}
+.body-primary {
+  text-align: left;
+  font: Regular 20px/24px Helvetica Neue;
+  letter-spacing: 0;
+  color: #707070;
+  color: #B89122 !important;
+  opacity: 1;
+}
+.body-secondary {
+  text-align: left;
+  font: Regular 20px/24px Helvetica Neue;
+  letter-spacing: 0;
+  color: #707070;
+  opacity: 1;
+}
+
+
+/* Buttons */
+
+.btn {
+  border-radius: 12px;
+}
+
+.btn-primary {
+    background-color: hsl(44, 69%, 43%) !important;
+    border-color: hsl(44, 69%, 43%) !important;
+}
+.btn-primary:hover {
+  background-color: hsl(44, 69%, 33%) !important;
+  border-color: hsl(44, 69%, 33%) !important;
+}
+.btn-primary:active, .btn-primary.active, .btn-primary:disabled {
+  background-color: hsl(44, 69%, 63%) !important;
+  border-color: hsl(44, 69%, 63%) !important;
+}
+.btn-primary:focus {
+    box-shadow: 0 0 0 0.2rem hsla(44, 69%, 63%, 0.2) !important;
+}
+
+
+.btn-secondary {
+  background-color: hsl(248, 100%, 27%) !important;
+  border-color: hsl(248, 100%, 27%) !important;
+}
+.btn-secondary:hover {
+background-color: hsl(248, 100%, 17%) !important;
+border-color: hsl(248, 100%, 17%) !important;
+}
+.btn-secondary:active, .btn-secondary.active, .btn-secondary:disabled {
+background-color: hsl(248, 100%, 27%) !important;
+border-color: hsl(248, 100%, 27%) !important;
+}
+.btn-secondary:focus {
+  box-shadow: 0 0 0 0.2rem hsla(248, 100%, 30%, 0.2) !important;
+}
+
+
+.btn-arrow:hover{
+  cursor: pointer;
+}
+
+/* Inputs */
+.form-control {
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  border: none;
+  border-radius: 12px;
+}
+
+
+.checkbox:hover {
+  cursor: pointer;
+}
+.checkbox .round {
+    position: relative;
+    display: inline;
+    margin-right: 8px;
+  }
+  
+  .checkbox .round label {
+    background-color: #D6D5D5;
+    border-radius: 5px;
+    cursor: pointer;
+    height: 18px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 18px;
+  }
+  
+  .checkbox .round label:after {
+    border: 2px solid #fff;
+    border-top: none;
+    border-right: none;
+    content: "";
+    height: 4px;
+    left: 5px;
+    opacity: 0;
+    position: absolute;
+    top: 6px;
+    transform: rotate(-45deg);
+    width: 8px;
+  }
+  
+  .checkbox  .round input[type="checkbox"] {
+    visibility: hidden;
+  }
+  
+  .checkbox  .round input[type="checkbox"]:checked + label {
+    background-color: #B89122;
+    border-color: #B89122;
+  }
+  
+  .checkbox  .round input[type="checkbox"]:checked + label:after {
+    opacity: 1;
+  }
+  .checkbox .label {
+    text-align: center;
+    display: inline;
+    letter-spacing: 0;
+    color: #B89122;
+    opacity: 1;
+  }
+
+.introduction {
+  background: url(https://www.google.com/url?sa=i&source=images&cd=&ved=2ahUKEwjg7eX88uvkAhVDDOwKHbUeBdcQjRx6BAgBEAQ&url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FAncient_Greece&psig=AOvVaw1Yaw1go1LaUOVSdVmalGbh&ust=1569498303175485);
+  height: 100vh;
+  width: 100%;
+}
+
+.polygon {
+      margin-top: -80px;
+      width: 100%;
+      height: 100vh;
+      border-top: 200px solid white;
+      transform: skew(-40deg);
+      background: white;
+      margin-left: -700px;
+}
