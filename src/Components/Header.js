@@ -1,6 +1,7 @@
 import React from 'react'
 import { Navbar, Dropdown, SplitButton, NavDropdown, Nav } from 'react-bootstrap'
 import { NavLink } from 'react-router-dom'
+import imagePerson from '../assets/ico-person.png';
 
 export default function Header(props) {
 
@@ -15,7 +16,8 @@ export default function Header(props) {
                     <NavLink to="/workspace" style={styles.navlink}>Workspace</NavLink>
                     <NavLink to="/assets" style={styles.navlink}>My Assets</NavLink>
                     <NavLink to="/editor" style={styles.navlink}>My Stories</NavLink>
-                    <SplitButton variant={'link'}>
+                    <img src={imagePerson} style={{ marginLeft: '15px', marginRight: '-25px', marginTop: '5px', height: '30px' }} />
+                    <SplitButton variant={'link'} >
                         <Dropdown.Item eventKey="1" onClick={logout}>Logout</Dropdown.Item>
                     </SplitButton>
                 </Nav>
@@ -31,4 +33,10 @@ const styles = {
         letterSpacing: 0.82,
         color: "#B89122",
     },
+    iconPerson: {
+        backgroundImage: `url(${imagePerson})`,
+        backgroundPosition: 'bottom',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
+    }
 }

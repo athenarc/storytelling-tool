@@ -16,7 +16,7 @@ export default function SlideForm(props) {
     const { chapter, updateChapter, showAssetsInsideStoryForm, toggleAssetsInsideStoryForm } = props
     const [localStory, setLocalStory] = useState({})
     const [localChapter, setLocalChapter] = useState({})
-    const storyType = props.match.params.type
+    const [storyType, setStoryType] = useState()
 
 
     const onAssetsLoad = () => {
@@ -29,18 +29,23 @@ export default function SlideForm(props) {
         fetchData(ENDPOINT.STORIES + `/${props.match.params.storyId}`)
             .then((data) => {
                 setLocalStory(data)
+                if (data.category == 1) setStoryType(STORY_TYPES.SLIDESHOW)
+                if (data.category == 2) setStoryType(STORY_TYPES.HOTSPOTS)
+                if (data.category == 3) setStoryType(STORY_TYPES.TIMELINE)
                 const lChapter = data.chapters.find(x => x.id == props.match.params.chapterId)
                 if (lChapter) setLocalChapter(lChapter)
             })
             .catch((ex) => {
                 // props.history.push('/workspace')
             })
+
     }, [chapter])
 
 
 
     const onSave = () => {
         console.log(chapter)
+        console.log(localChapter)
         postData(ENDPOINT.STORIES + `/${props.match.params.storyId}/chapters`, {
             title: chapter.title,
             description: chapter.description,
@@ -69,6 +74,7 @@ export default function SlideForm(props) {
     }
 
     const getStoryCategory = () => {
+        console.log('getStoryCategory=' + storyType)
         switch (storyType) {
             case STORY_TYPES.SLIDESHOW: return 1
             case STORY_TYPES.HOTSPOTS: return 2
@@ -77,6 +83,7 @@ export default function SlideForm(props) {
         }
     }
     const getStoryTitle = () => {
+        console.log('getStoryTitle=' + storyType)
         switch (storyType) {
             case STORY_TYPES.SLIDESHOW: return "Slideshow"
             case STORY_TYPES.HOTSPOTS: return "Hotspots"
@@ -159,7 +166,7 @@ export default function SlideForm(props) {
         <>
             {!showAssetsInsideStoryForm ? getContent() : <Assets onAssetClick={onAssetClick} />}
             {showAssetsInsideStoryForm && <NavButtons onPrevious={goBack} />}
-            {!showAssetsInsideStoryForm && <NavButtons onPrevious={goBackStory} hasSave={chapter.title && chapter.description && chapter.assets.length > 0} onSave={onSave} />}
+            {!showAssetsInsideStoryForm && <NavButtons onPrevious={goBackStory} hasSave={localChapter.title && localChapter.description && chapter.assets.length > 0} onSave={onSave} />}
         </>
     )
 }

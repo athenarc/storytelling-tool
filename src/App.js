@@ -9,6 +9,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NotFound from './Components/NotFound'
 import Home from './Components/Home'
+import LearnMore from './Components/LearnMore'
+import Explore from './Components/Explore'
 import Stories from './Components/Stories'
 import Login from './Components/Login/Login'
 import Register from './Components/Login/Register'
@@ -155,6 +157,8 @@ export default class App extends React.Component {
           <Route path="/login" {...this.props} component={(props) => <Login  {...props} login={this.login} isAuth={isAuth} isLoading={isLoading} />} />
           <Route path="/register" {...this.props} component={(props) => <Register  {...props} register={this.register} isAuth={isAuth} isLoading={isLoading} />} />
           <PrivateRoute path="/home" {...this.props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <Home  {...props} permissions={[isAuth]} isLoading={isLoading} />} />
+          <PrivateRoute path="/explore" {...this.props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <Explore  {...props} permissions={[isAuth]} isLoading={isLoading} />} />
+          <PrivateRoute path="/learnmore" {...this.props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <LearnMore  {...props} permissions={[isAuth]} isLoading={isLoading} />} />
           <PrivateRoute exact path="/workspace" {...this.props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <Workspace  {...props} />} />
           <PrivateRoute path="/workspace/:type" {...this.props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <StoryForm toggleAssetsInsideStoryForm={this.toggleAssetsInsideStoryForm} showAssetsInsideStoryForm={showAssetsInsideStoryForm} story={story} updateStory={this.handleStoryUpdate} {...props} />} />
           <PrivateRoute path="/assets/" {...this.props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <Assets  {...props} />} />

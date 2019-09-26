@@ -8,7 +8,7 @@ import { ENDPOINT } from '../../config'
 import imagePlaceholder from '../../assets/image-placeholder.png';
 library.add(faSave, faTrashAlt, faCaretRight)
 
-const Stories = (props) => {
+const Explore = (props) => {
 
     const [deleteStoryId, setDeleteStoryId] = useState(0)
     const [stories, setStories] = useState([])
@@ -102,7 +102,7 @@ const Stories = (props) => {
 
 }
 
-export default Stories
+export default Explore
 
 const styles = {
     itemImage: {
