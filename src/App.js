@@ -28,6 +28,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import './App.css';
 import Introduction from './Components/Home/Introduction';
+import StoryCarousel from './Components/Stories/StoryCarousel';
 
 const md5 = require('md5');
 
@@ -164,6 +165,7 @@ export default class App extends React.Component {
           <PrivateRoute path="/assets/" {...this.props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <Assets  {...props} />} />
           <PrivateRoute exact path="/editor" permissions={[isAuth]} isLoading={isLoading} {...this.props} component={(props) => <Stories {...props} />} />
           <PrivateRoute path="/editor/:id" {...this.props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <StoryView story={story} setStory={this.handleStorySet} updateStory={this.handleStoryUpdate} {...props} />} />
+          <PrivateRoute path="/story/:id" {...this.props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <StoryCarousel {...props} />} />
           <PrivateRoute path="/slide/:storyId/:chapterId" {...this.props} permissions={[isAuth]} isLoading={isLoading} component={(props) => <SlideForm chapter={chapter} updateChapter={this.handleChapterUpdate} toggleAssetsInsideStoryForm={this.toggleAssetsInsideStoryForm} showAssetsInsideStoryForm={showAssetsInsideStoryForm}   {...props} />} />
           <Route component={() => <NotFound />} />
         </Switch>

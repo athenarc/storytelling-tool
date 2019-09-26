@@ -62,7 +62,7 @@ const Stories = (props) => {
                 <div className="body-secondary">{story.description}</div>
                 <Row className="mt-auto">
                     <Col style={styles.maxContent}><Button variant={story.isPublic ? 'success' : 'primary'}>{story.isPublic ? 'Published' : 'Private'}</Button></Col>
-                    <Col style={styles.maxContent}><Button variant="secondary" >View</Button></Col>
+                    <Col style={styles.maxContent}><Button variant="secondary" onClick={() => props.history.push(`/story/${story.id}`)}>View</Button></Col>
                     <Col style={styles.maxContent}><Button variant="secondary" onClick={() => props.history.push(`/editor/${story.id}`)}>Edit</Button></Col>
                     <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmDelete(story.id)}>Delete</Button></Col>
                     <Col style={styles.maxContent}><Button variant="secondary">Share</Button></Col>
