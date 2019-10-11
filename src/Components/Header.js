@@ -8,7 +8,7 @@ export default function Header(props) {
     const { user, logout } = props
     return (
         <Navbar variant="light" className="bg-white" style={styles.navbar} expand="lg">
-            <Navbar.Brand href="./"><img src={require('../assets/brand.png')} width={180} /></Navbar.Brand>
+            <Navbar.Brand href="/"><img src={require('../assets/brand.png')} width={180} /></Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ml-auto">

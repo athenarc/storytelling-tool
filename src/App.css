@@ -39,7 +39,6 @@ body {
   text-align: left;
   font: Regular 20px/24px Helvetica Neue;
   letter-spacing: 0;
-  color: #707070;
   color: #B89122 !important;
   opacity: 1;
 }
@@ -221,4 +220,14 @@ h3 {
   align-items: center;
   margin: 0;
   background: #adceed;
+}
+
+.story-item .overlay {
+  opacity: 0;
+  transition: 500ms;
+}
+.story-item:hover .overlay{
+  cursor: pointer;
+  opacity: 1;
+  transition: 500ms;
 }
