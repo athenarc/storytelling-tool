@@ -73,7 +73,7 @@ const Stories = (props) => {
 
     return (
         <React.Fragment >
-            <Container className="mt-5">
+            <Container className="my-5">
                 <Row>
                     <Col><Button className="w-100" size="lg">My Stories</Button></Col>
                 </Row>

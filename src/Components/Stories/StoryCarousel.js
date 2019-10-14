@@ -35,17 +35,19 @@ export default function StoryCarousel(props) {
 
     const getChapters = () => {
         const chapters = story ? story.chapters : []
-        return chapters.map((ch, index) => {
-            const asset = ch.assets[0]
-            return <div className="each-slide" style={{ position: 'relative' }} key={index}>
-                {!asset.embedUrl &&
-                    <div style={{ 'backgroundImage': `url(${asset.thumbnail})`, height: 480 }} />
-                }
-                {asset.embedUrl &&
-                    <iframe id="modelEmbedded" src={asset.embedUrl} className="w-100" style={{ height: 480 }}></iframe>
-                }
-            </div>
-        })
+        return chapters
+            .filter(ch => ch.assets[0])
+            .map((ch, index) => {
+                const asset = ch.assets[0]
+                return <div className="each-slide" style={{ position: 'relative' }} key={index}>
+                    {!asset.embedUrl &&
+                        <div style={{ 'backgroundImage': `url(${asset.thumbnail})`, height: 480 }} />
+                    }
+                    {asset.embedUrl &&
+                        <iframe id="modelEmbedded" src={asset.embedUrl} className="w-100" style={{ height: 480 }}></iframe>
+                    }
+                </div>
+            })
     }
 
     const getValue = (prop) => {
@@ -85,12 +87,12 @@ export default function StoryCarousel(props) {
 
                         <div className="d-flex " style={{ flex: 1 }}>
                             <div style={{ flex: 1 }} className="body-secondary f-14">{getValue('description')}</div>
-                            <div className="d-flex flex-column">
+                            {/* <div className="d-flex flex-column">
                                 <img className="mt-auto" alt="" src={require('../../assets/ico-person.png')} width="30" height="30" />
                                 <img alt="" src={require('../../assets/ico-person.png')} width="30" height="30" />
                                 <img alt="" src={require('../../assets/ico-person.png')} width="30" height="30" />
                                 <img alt="" src={require('../../assets/ico-person.png')} width="30" height="30" />
-                            </div>
+                            </div> */}
                         </div>
 
                     </div>

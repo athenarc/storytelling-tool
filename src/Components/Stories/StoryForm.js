@@ -57,7 +57,7 @@ export default function StoryForm(props) {
             ...story,
             chapters: [{
                 title: "Introduction",
-                description: "Intorucation Slide",
+                description: "Introduction Slide",
                 assets: [{
                     ...model
                 }]

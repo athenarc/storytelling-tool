@@ -73,15 +73,16 @@ export default function SlideForm(props) {
             : props.history.push(`/editor/${props.match.params.storyId}`)
     }
 
-    const getStoryCategory = () => {
-        console.log('getStoryCategory=' + storyType)
-        switch (storyType) {
-            case STORY_TYPES.SLIDESHOW: return 1
-            case STORY_TYPES.HOTSPOTS: return 2
-            case STORY_TYPES.TIMELINE: return 3
-            default: return
-        }
-    }
+    // const getStoryCategory = () => {
+    //     console.log('getStoryCategory=' + storyType)
+    //     switch (storyType) {
+    //         case STORY_TYPES.SLIDESHOW: return 1
+    //         case STORY_TYPES.HOTSPOTS: return 2
+    //         case STORY_TYPES.TIMELINE: return 3
+    //         default: return
+    //     }
+    // }
+
     const getStoryTitle = () => {
         console.log('getStoryTitle=' + storyType)
         switch (storyType) {
@@ -111,8 +112,6 @@ export default function SlideForm(props) {
     }
 
     const getChapterAssets = () => {
-        console.log('local chapter assets')
-        console.log(chapter)
         if (chapter && chapter.assets)
             return chapter.assets.map(asset => {
                 return <Col md={6} className="p-9">
