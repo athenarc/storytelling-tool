@@ -1,6 +1,6 @@
 import React, { Component, Fragment, useState, useEffect } from 'react'
 import { Container, Row, Col, Form, Button } from 'react-bootstrap'
-import { fetchData, postData, post } from '../../utils'
+import { fetchData, postData, post, deleteData, updateData } from '../../utils'
 import { ENDPOINT } from '../../config'
 import NavButtons from '../Common/NavButtons'
 import { STORY_TYPES } from '../../resources'
@@ -42,6 +42,7 @@ export default class StoryView extends Component {
                 // if (!data.chapters[0]) props.history.push('/workspace')
             })
             .then((localStory) => {
+                console.log(localStory)
                 this.setIframe(localStory)
             })
             .catch((ex) => {
@@ -65,6 +66,7 @@ export default class StoryView extends Component {
         this.setState({
             currentChapterId: chapter ? chapter.id : -1,
             showEdit: true,
+            currentPosition: chapter ? chapter.position : null
         })
     }
 
@@ -100,18 +102,35 @@ export default class StoryView extends Component {
             }
             postData(ENDPOINT.STORIES + `/${this.state.localStory.id}/chapters`, payload)
                 .then((data) => {
+                    this.setState({ showEdit: false })
+                    this.setState({ currentPosition: null })
+                    if (!currentChapter.assets[0]) return this.getStoryById(this.state.localStory.id)
                     const payload = { ...currentChapter.assets[0] }
                     postData(ENDPOINT.STORIES + `/${this.state.localStory.id}/chapters/${data.chapters[data.chapters.length - 1].id}/assets`, payload)
                         .then(() => {
-                            this.setState({ showEdit: false })
                             // force update the current story after one save
                             this.getStoryById(this.state.localStory.id)
                         }).catch(ex => console.log(ex))
                 }).catch(ex => console.log(ex))
         } else {
             // TODO: update chapter here...
-
-
+            const payload = {
+                title: currentChapter.title,
+                description: currentChapter.description,
+                position: this.wrapPosition()
+            }
+            updateData(ENDPOINT.STORIES + `/${this.state.localStory.id}/chapters/${currentChapter.id}`, payload)
+                .then((data) => {
+                    this.setState({ showEdit: false })
+                    this.setState({ currentPosition: null })
+                    return this.getStoryById(this.state.localStory.id)
+                    // const payload = { ...currentChapter.assets[0] }
+                    // postData(ENDPOINT.STORIES + `/${this.state.localStory.id}/chapters/${data.chapters[data.chapters.length - 1].id}/assets`, payload)
+                    //     .then(() => {
+                    //         // force update the current story after one save
+                    //         this.getStoryById(this.state.localStory.id)
+                    //     }).catch(ex => console.log(ex))
+                }).catch(ex => console.log(ex))
         }
     }
 
@@ -134,6 +153,7 @@ export default class StoryView extends Component {
                     ...localStory.chapters[0].assets[0]
                 }).then(() => {
 
+                    this.props.history.push('/editor/' + _story.id)
                     this.getStoryById(_story.id)
 
                 }).catch(ex => console.log(ex))
@@ -205,11 +225,12 @@ export default class StoryView extends Component {
     }
 
     handleAnnotation = (api, chapter) => {
-
+        const position = JSON.parse(chapter.position);
+        if (!position) return
         const createAnnotation = (err, camera) => api.createAnnotation(
-            JSON.parse(chapter.position),
-            [0.1229991557663267, -3.5779795878788656, -0.5151466147866559],
-            camera.position,
+            position,
+            [0, 0, 0],
+            [position[0] * 3, position[1] * 3, position[2] * 2],
             camera.target,
             chapter.title,
             chapter.description
@@ -242,6 +263,7 @@ export default class StoryView extends Component {
     render() {
         const { localStory, currentChapterId, showAssetPicker, showEdit } = this.state
         const currentChapter = localStory && localStory.chapters.find(x => x.id === currentChapterId)
+        console.log(localStory && localStory.chapters)
 
         const getIntroPreview = () => {
             if (!localStory) return null
@@ -258,12 +280,12 @@ export default class StoryView extends Component {
 
         const getSlides = (chapters) => {
             const items = chapters.map(ch => {
-                return <li style={{ display: 'flex' }} className="m-2">
+                return <li key={ch.id} style={{ display: 'flex' }} className="m-2">
                     <a className="body-primary p-2 mr-auto">{ch.title}</a>
                     <Button onClick={() => this.handleNewChapter(ch.id)} className="btn btn-primary">Edit</Button>
                 </li>
             })
-            items.push(<li style={{ display: 'flex' }} className="m-2">
+            items.push(<li key={-2} style={{ display: 'flex' }} className="m-2">
                 <a className="body-primary p-2 mr-auto">Slide</a>
                 <Button disabled={localStory && localStory.chapters.find(x => x.id === -1)} onClick={() => this.handleNewChapter(null)} className="btn btn-primary">Add</Button>
             </li>)
@@ -278,6 +300,49 @@ export default class StoryView extends Component {
                     </Col>
                 })
 
+        }
+
+        const deleteChpater = () => {
+            const chapter = this.state.localStory.chapters.find(x => x.id === this.state.currentChapterId)
+            if (chapter.id === -1) {
+                this.setState({
+                    showEdit: false,
+                    localStory: {
+                        ...this.state.localStory,
+                        chapters: this.state.localStory.chapters.filter(x => x.id !== -1)
+                    }
+                })
+            } else {
+                deleteData(ENDPOINT.STORIES + `/${this.state.localStory.id}/chapters/${chapter.id}`)
+                    .then(() => {
+                        this.setState({ showEdit: false })
+                        this.getStoryById(this.state.localStory.id)
+                    }).catch(ex => console.log(ex))
+            }
+        }
+
+        const canSave = () => {
+            const currentChapter = this.state.localStory && this.state.localStory.chapters.find(x => x.id === this.state.currentChapterId)
+            if (!currentChapter.description || !currentChapter.title) return false
+            if (localStory.category === 2 && localStory.chapters[0].assets[0].embedUrl && !this.state.currentPosition && this.state.currentChapterId !== this.state.localStory.chapters[0].id) {
+                return false
+            }
+            return true
+        }
+
+        const canDelete = () => {
+            if (this.state.currentChapterId === this.state.localStory.chapters[0].id) {
+                return false
+            }
+            return true
+        }
+
+        const getRequiredInputDescription = () => {
+            if (this.state.currentChapterId === this.state.localStory.chapters[0].id) return <></>
+            const currentChapter = this.state.localStory && this.state.localStory.chapters.find(x => x.id === this.state.currentChapterId)
+            if (!currentChapter.description || !currentChapter.title) return <div className="text-danger">Chapter title and chapter description are required fields.</div>
+            if (localStory.category === 2 && localStory.chapters[0].assets[0].embedUrl && !this.state.currentPosition) return <div className="text-danger">Please click somewhere on the model to add the chapter.</div>
+            return <div className="text-success">Ready to save chapter.</div>
         }
 
         return (
@@ -320,12 +385,12 @@ export default class StoryView extends Component {
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Text className="text-muted">
-                                        For
-                                                </Form.Text>
+                                        {getRequiredInputDescription()}
+                                    </Form.Text>
                                 </Form.Group>
                                 <Form.Group>
-                                    <Button variant="secondary" className="mx-1" disabled>Delete</Button>
-                                    <Button variant="secondary" className="mx-1" onClick={this.handleSaveChapter}>Save</Button>
+                                    <Button variant="secondary" className="mx-1" disabled={!canDelete()} onClick={deleteChpater}>Delete</Button>
+                                    <Button variant="secondary" className="mx-1" disabled={!canSave()} onClick={this.handleSaveChapter}>Save</Button>
                                 </Form.Group>
 
                             </Col>}
@@ -334,7 +399,7 @@ export default class StoryView extends Component {
                 </Container>
                 <span className={`mt-5 ${!showAssetPicker ? 'd-none' : ''}`}>
                     <Assets onAssetClick={this.handleAssetClick} />
-                    <NavButtons onPrevious={() => this.setState({ showAssetPicker: true })} />
+                    <NavButtons onPrevious={() => this.setState({ showAssetPicker: false })} />
                 </span>
             </Fragment>
         )
