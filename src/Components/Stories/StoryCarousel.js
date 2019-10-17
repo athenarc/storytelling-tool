@@ -33,6 +33,7 @@ export default class StoryCarousel extends Component {
     }
 
     handle3dNavigation(direction) {
+        if (this.state.story.chapters.length <= 1) return
         const totalChapters = this.state.story.chapters.length - 1
         const index = this.state.chpaterIndex
 
@@ -84,10 +85,12 @@ export default class StoryCarousel extends Component {
         client.init(
             uid,
             {
+                annotations_visible: story.chapters.length > 1,
                 success: (api) => {
                     api.load()
                     api.start()
                     api.addEventListener('viewerready', () => {
+                        this.setState({ api })
                         story.chapters.forEach(ch => {
                             this.handleAnnotation(api, ch)
                         });
@@ -117,27 +120,27 @@ export default class StoryCarousel extends Component {
     }
 
     handleAnnotation = (api, chapter) => {
-        this.setState({ api })
-        const position = JSON.parse(chapter.position);
-        if (!position) return
-        const createAnnotation = (err, camera) => api.createAnnotation(
-            position,
-            [0, 0, 0],
-            [position[0] * 3, position[1] * 3, position[2] * 2],
-            camera.target,
-            chapter.title,
-            chapter.description
-        );
-
-        const addCustomAnotations = () => api.getCameraLookAt((err, camera) => createAnnotation(err, camera));
-
-        api.getAnnotationList(function (err, annotations) {
+        api.getAnnotationList((err, annotations) => {
             annotations.forEach((an, index) => {
+                // IMPORTANT: Quick Fix
+                api.removeAnnotation(index);
                 api.removeAnnotation(index);
             })
-            addCustomAnotations()
-        });
 
+            api.getCameraLookAt((err, camera) => {
+                const position = JSON.parse(chapter.position);
+                if (position)
+                    api.createAnnotation(
+                        position,
+                        [0, 0, 0],
+                        [position[0] * 3, position[1] * 3, position[2] * 2],
+                        camera.target,
+                        chapter.title,
+                        chapter.description
+                    );
+            })
+
+        });
     }
 
     render() {
@@ -202,7 +205,7 @@ export default class StoryCarousel extends Component {
                             </div>
 
                             <div className="d-flex flex-column py-2" style={{ flex: 1, maxHeight: 400, overflow: 'auto' }}>
-                                <h5 className="header-primary">{story && story.chapters[chpaterIndex] && story.chapters[_chIndex].title}</h5>
+                                <h5 className="header-primary">{story && story.chapters[_chIndex] && story.chapters[_chIndex].title}</h5>
                                 <div style={{ flex: 1 }} className="body-secondary f-14">{getValue('description', true)}</div>
                                 {/* <div className="d-flex flex-column">
                                 <img className="mt-auto" alt="" src={require('../../assets/ico-person.png')} width="30" height="30" />

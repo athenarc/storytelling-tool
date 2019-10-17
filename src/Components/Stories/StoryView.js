@@ -195,6 +195,7 @@ export default class StoryView extends Component {
         client.init(
             uid,
             {
+                annotations_visible: story.chapters.length > 1,
                 success: (api) => {
                     api.load()
                     api.start()
@@ -225,26 +226,27 @@ export default class StoryView extends Component {
     }
 
     handleAnnotation = (api, chapter) => {
-        const position = JSON.parse(chapter.position);
-        if (!position) return
-        const createAnnotation = (err, camera) => api.createAnnotation(
-            position,
-            [0, 0, 0],
-            [position[0] * 3, position[1] * 3, position[2] * 2],
-            camera.target,
-            chapter.title,
-            chapter.description
-        );
-
-        const addCustomAnotations = () => api.getCameraLookAt((err, camera) => createAnnotation(err, camera));
-
-        api.getAnnotationList(function (err, annotations) {
+        api.getAnnotationList((err, annotations) => {
             annotations.forEach((an, index) => {
+                // IMPORTANT: Quick Fix
+                api.removeAnnotation(index);
                 api.removeAnnotation(index);
             })
-            addCustomAnotations()
-        });
 
+            api.getCameraLookAt((err, camera) => {
+                const position = JSON.parse(chapter.position);
+                if (position)
+                    api.createAnnotation(
+                        position,
+                        [0, 0, 0],
+                        [position[0] * 3, position[1] * 3, position[2] * 2],
+                        camera.target,
+                        chapter.title,
+                        chapter.description
+                    );
+            })
+
+        });
     }
 
 

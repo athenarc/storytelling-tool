@@ -3,7 +3,7 @@ import { Table, Row, Col, Button, Container, Modal } from 'react-bootstrap'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faTrashAlt, faCaretRight } from '@fortawesome/free-solid-svg-icons'
-import { fetchData, deleteData } from '../../utils'
+import { fetchData, deleteData, maxLetters } from '../../utils'
 import { ENDPOINT } from '../../config'
 import imagePlaceholder from '../../assets/image-placeholder.png';
 library.add(faSave, faTrashAlt, faCaretRight)
@@ -48,18 +48,18 @@ const Stories = (props) => {
 
 
     const getStoryItem = (story) => {
-        console.log(story)
+
         let storyImage = imagePlaceholder;
         if (story.chapters && story.chapters.length > 0 && story.chapters[0].assets.length > 0)
             storyImage = story.chapters[0].assets[0].thumbnail
 
-        return <Row className="mt-2">
+        return <Row className="mt-2" key={story.id}>
             <Col style={styles.maxContent}>
                 <img src={storyImage} style={styles.itemImage} />
             </Col>
             <Col style={{ display: 'flex', flexDirection: 'column' }}>
                 <h4 className="header-primary">{story.title}</h4>
-                <div className="body-secondary">{story.description}</div>
+                <div className="body-secondary">{maxLetters(story.description, 250)}</div>
                 <Row className="mt-auto">
                     <Col style={styles.maxContent}><Button variant={story.isPublic ? 'success' : 'primary'}>{story.isPublic ? 'Published' : 'Private'}</Button></Col>
                     <Col style={styles.maxContent}><Button variant="secondary" onClick={() => props.history.push(`/story/${story.id}`)}>View</Button></Col>

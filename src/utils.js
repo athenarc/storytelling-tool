@@ -140,3 +140,11 @@ export const getExcel = (url, data, name) => {
         });
 
 }
+
+export const maxLetters = (word, max) => {
+    if (!word) return ""
+    if (word.length >= max + 3) {
+        return word.substring(0, max) + '...'
+    }
+    return word
+}
