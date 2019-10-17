@@ -4,8 +4,22 @@ import { postData, addToast } from '../../utils'
 import { ENDPOINT } from '../../config'
 import { TOAST } from '../../resources'
 import Checkbox from '../lib/Checkbox'
-import Iframe from 'react-iframe'
 import Spinner from '../lib/Spinner'
+import _ from 'lodash'
+import SearchText from '../lib/SearchText'
+
+function DebouncedInput(props) {
+    const { onChange, value, delay = 300, ...rest } = props;
+
+
+    return (
+        <input
+            value={value}
+            {...rest}
+            onChange={_.debounce(onChange, delay)}
+        />
+    )
+}
 
 export default function Assets(props) {
 
@@ -16,6 +30,14 @@ export default function Assets(props) {
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
+        performSearch()
+    }, [query])
+
+    useEffect(() => {
+        performSearch()
+    }, [searchOnSketchfab, searchOnEuropeana])
+
+    const performSearch = () => {
         setIsLoading(true)
         postData(ENDPOINT.ASSETS.SEARCH, { query, searchOnSketchfab, searchOnEuropeana, }, true)
             .then(assets => {
@@ -23,7 +45,7 @@ export default function Assets(props) {
                 setIsLoading(false)
             })
             .catch(ex => addToast('Failed to load assets', TOAST.ERROR))
-    }, [query, searchOnSketchfab, searchOnEuropeana])
+    }
 
     const handleChange = input => () => {
         input === 'fab'
@@ -54,7 +76,15 @@ export default function Assets(props) {
                 <Col md={6} className="ml-auto">
                     <Row>
                         <Col className="max-content mt-2"><h4 className="header-primary">My Assets</h4></Col>
-                        <Col><Form.Control value={query} onChange={(e) => setQuery(e.target.value)} type="search" placeholder="search" className="text-right bg-secondary" /></Col>
+                        <Col>
+                            <SearchText onChange={(assyncQuery) => setQuery(assyncQuery)} />
+                            {/* <Form.Control
+                                value={query}
+                                onChange={handleInputChange}
+                                type="search"
+                                placeholder="search"
+                                className="text-right bg-secondary" /> */}
+                        </Col>
                     </Row>
                 </Col>
             </Row>

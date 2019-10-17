@@ -11,25 +11,51 @@ const properties = {
     infinite: true,
     indicators: true,
     arrows: true,
-    onChange: (oldIndex, newIndex) => {
-        console.log(`slide transition from ${oldIndex} to ${newIndex}`);
-    }
 }
 
 export default class StoryCarousel extends Component {
 
+    // api.gotoAnnotation(0);
 
     constructor(props) {
         super(props)
         this.state = {
+            api: null,
             story: null,
+            chpaterIndex: 0
         }
         this.getStoryById = this.getStoryById.bind(this)
+        this.handleChangeSlide = this.handleChangeSlide.bind(this)
     }
 
+    handleChangeSlide(oldIndex, newIndex) {
+        this.setState({ chpaterIndex: newIndex })
+    }
+
+    handle3dNavigation(direction) {
+        const totalChapters = this.state.story.chapters.length - 1
+        const index = this.state.chpaterIndex
+
+
+        if (direction === 'next') {
+            if (index === totalChapters - 1) {
+                this.state.api.gotoAnnotation(0)
+            } else {
+                this.state.api.gotoAnnotation(index + 1)
+            }
+
+        } else {
+            if (index === 0) {
+                this.state.api.gotoAnnotation(totalChapters - 1)
+            } else {
+                this.state.api.gotoAnnotation(index - 1)
+            }
+
+        }
+    }
 
     componentDidMount() {
-        this.setState({ localStory: this.props.story })
+        this.setState({ chpaterIndex: 0 })
         this.getStoryById(this.props.match.params.id)
     }
 
@@ -55,7 +81,6 @@ export default class StoryCarousel extends Component {
         const client = new window.Sketchfab(version, iframe);
         const uid = story.chapters[0].assets[0].uid
 
-        console.log(iframe)
         client.init(
             uid,
             {
@@ -69,6 +94,9 @@ export default class StoryCarousel extends Component {
                     });
                     // this.setSketchFab(api)
                     // this.apiEventListeners()
+                    api.addEventListener('annotationSelect', (index) => {
+                        this.setState({ chpaterIndex: index })
+                    });
                     api.addEventListener(
                         'click',
                         (info) => {
@@ -89,6 +117,7 @@ export default class StoryCarousel extends Component {
     }
 
     handleAnnotation = (api, chapter) => {
+        this.setState({ api })
         const position = JSON.parse(chapter.position);
         if (!position) return
         const createAnnotation = (err, camera) => api.createAnnotation(
@@ -112,7 +141,9 @@ export default class StoryCarousel extends Component {
     }
 
     render() {
-        const { story } = this.state
+        const { story, chpaterIndex } = this.state
+        const is3dModel = story && story.category === 2 && story.chapters[0].assets[0].embedUrl
+        const _chIndex = is3dModel ? chpaterIndex + 1 : chpaterIndex
 
         const getChapters = () => {
             const chapters = story ? story.chapters : []
@@ -126,33 +157,39 @@ export default class StoryCarousel extends Component {
                         } {
                             asset.embedUrl &&
                             <iframe className="w-100" src={asset.embedUrl} style={{ height: 480 }}></iframe>
+
                         }
                     </div>
                 })
         }
 
-        const getValue = (prop) => {
+        const getValue = (prop, inSlide) => {
+            if (inSlide) {
+                const chapters = story && story.chapters[_chIndex]
+                const asset = chapters && chapters.assets[0]
+                return asset ? asset[prop] : '-'
+            }
             return story ? story[prop] : '-'
         }
 
         return (
             <Container className="d-flex flex-column" style={{ height: "calc(100vh - 80px)" }}>
                 <Row className="py-5">
-                    <h2 className="header-primary">View Story</h2>
+                    <h2 className="header-primary">{getValue('title')}</h2>
                 </Row>
-                <Row style={{ flex: 1 }}>
+                <Row style={{ flex: 1 }} className="pb-5">
                     <Col sm={3} className="p-0">
                         <div className="d-flex flex-column" style={{ height: 100 + '%' }}>
 
                             <div className="d-flex flex-column" style={styles.overlay}>
-                                <div className="font-weight-bold">{getValue('title')}</div>
+                                <div className="font-weight-bold">{getValue('description')}</div>
                                 <div className="mt-2">Published: {new Date(getValue('createdAt')).toDateString()}</div>
                                 <div className="font-italic"> Category: Category {getValue('category')}</div>
                             </div>
 
                             <div className="d-flex bg-white p-1  align-items-center">
                                 <img className="mx-1" alt="" width="20" height="20" src={require('../../assets/ico-person.png')} />
-                                <div className="mx-1 mr-auto f-12">User</div>
+                                <div className="mx-1 mr-auto f-12">{story && story.createdBy.name}</div>
 
                                 <img className="mx-1" alt="" width="20" height="20" src={require('../../assets/ico-person.png')} />
                                 <div className="mx-1 body-secondary f-12">{getValue('viewsCount')}</div>
@@ -164,8 +201,9 @@ export default class StoryCarousel extends Component {
                                 <div className="mx-1 body-secondary f-12">{getValue('starredCount')}</div>
                             </div>
 
-                            <div className="d-flex " style={{ flex: 1 }}>
-                                <div style={{ flex: 1 }} className="body-secondary f-14">{getValue('description')}</div>
+                            <div className="d-flex flex-column py-2" style={{ flex: 1, maxHeight: 400, overflow: 'auto' }}>
+                                <h5 className="header-primary">{story && story.chapters[chpaterIndex] && story.chapters[_chIndex].title}</h5>
+                                <div style={{ flex: 1 }} className="body-secondary f-14">{getValue('description', true)}</div>
                                 {/* <div className="d-flex flex-column">
                                 <img className="mt-auto" alt="" src={require('../../assets/ico-person.png')} width="30" height="30" />
                                 <img alt="" src={require('../../assets/ico-person.png')} width="30" height="30" />
@@ -178,9 +216,13 @@ export default class StoryCarousel extends Component {
                     </Col>
                     <Col sm={9} className="p-0">
                         {
-                            story && story.category === 2 && story.chapters[0].assets[0].embedUrl
-                                ? <iframe id="api-frame" className="w-100" style={{ height: 480 }}></iframe>
-                                : <Slide {...properties}>
+                            is3dModel
+                                ? <div className="react-slideshow-container">
+                                    <div onClick={() => this.handle3dNavigation('previous')} className="nav"><span></span></div>
+                                    <iframe id="api-frame" className="w-100" style={{ height: 480 }}></iframe>
+                                    <div onClick={() => this.handle3dNavigation('next')} className="nav"><span></span></div>
+                                </div>
+                                : <Slide onChange={this.handleChangeSlide} {...properties}>
                                     {getChapters()}
                                 </Slide>
                         }

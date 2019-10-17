@@ -49,7 +49,7 @@ const styles = {
         height: 100 + '%',
         backgroundColor: 'rgba(184, 145, 32, 0.8)'
     },
-    image: { height: 180, width: 'auto', margin: 'auto' },
+    image: { height: 180, width: 'auto', margin: 'auto', maxWidth: 100 + '%' },
     imageContainer: { flex: 1, backgroundColor: '#fff', position: 'relative' },
-    container: { flex: 1, minWidth: 200, margin: 4 }
+    container: { flex: 1, minWidth: 250, margin: 4 }
 }
