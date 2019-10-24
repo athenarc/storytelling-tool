@@ -1,6 +1,6 @@
 {
-  "name": "storytelling",
-  "homepage": "/storytelling",
+  "name": "Share3D StoryMaker",
+  "homepage": "/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
