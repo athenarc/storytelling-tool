@@ -1,5 +1,6 @@
 {
- "name": "App",
+ "name": "Share3D-StoryMaker",
+ "short_name": "Share3D",
  "icons": [
   {
    "src": "\/android-icon-36x36.png",
