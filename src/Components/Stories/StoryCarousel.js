@@ -120,6 +120,10 @@ export default class StoryCarousel extends Component {
     }
 
     handleAnnotation = (api, chapter) => {
+        let chapterDesc = chapter.description;
+        if(chapter.assets && chapter.assets[0]) {
+            chapterDesc = chapter.description + "<br/><img alt='' src='"+chapter.assets[0].thumbnail+"' height='30' style={styles.embedImage} />"
+        }
         api.getAnnotationList((err, annotations) => {
             annotations.forEach((an, index) => {
                 // IMPORTANT: Quick Fix
@@ -136,7 +140,7 @@ export default class StoryCarousel extends Component {
                         [position[0] * 3, position[1] * 3, position[2] * 2],
                         camera.target,
                         chapter.title,
-                        chapter.description
+                        chapterDesc
                     );
             })
 
@@ -206,7 +210,12 @@ export default class StoryCarousel extends Component {
 
                             <div className="d-flex flex-column py-2" style={{ flex: 1, maxHeight: 400, overflow: 'auto' }}>
                                 <h5 className="header-primary">{story && story.chapters[_chIndex] && story.chapters[_chIndex].title}</h5>
-                                <div style={{ flex: 1 }} className="body-secondary f-14">{getValue('description', true)}</div>
+                                <div style={{ flex: 1 }} className="body-secondary f-14">
+                                    {story && story.chapters[_chIndex] && story.chapters[_chIndex].description}
+                                    <br/>
+                                    <img alt="" src={story && story.chapters[_chIndex] && story.chapters[_chIndex].assets[0] && story.chapters[_chIndex].assets[0].thumbnail} style={{maxWidth:240, maxHeight:240}}  />
+                                </div>
+                                
                                 {/* <div className="d-flex flex-column">
                                 <img className="mt-auto" alt="" src={require('../../assets/ico-person.png')} width="30" height="30" />
                                 <img alt="" src={require('../../assets/ico-person.png')} width="30" height="30" />
@@ -247,6 +256,10 @@ const styles = {
         color: '#fff',
         fontFamily: "museo-sans, sans-serif",
         fontSize: 14
+    },
+    embedImage: {
+        maxWidth: 30,
+        maxHeight: 30
     },
     image: { height: 180, width: 'auto', margin: 'auto' },
     imageContainer: { flex: 1, backgroundColor: '#fff', position: 'relative' },
