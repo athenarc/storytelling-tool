@@ -15,7 +15,7 @@ const Explore = (props) => {
     const [query, setQuery] = useState("")
 
     useEffect(() => {
-        fetchData(ENDPOINT.STORIES)
+        fetchData(ENDPOINT.STORIES_PUBLIC)
             .then(data => setStories(data))
             .catch(ex => console.log(ex))
         // return () => {
