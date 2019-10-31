@@ -8,18 +8,6 @@ import Spinner from '../lib/Spinner'
 import _ from 'lodash'
 import SearchText from '../lib/SearchText'
 
-function DebouncedInput(props) {
-    const { onChange, value, delay = 300, ...rest } = props;
-
-
-    return (
-        <input
-            value={value}
-            {...rest}
-            onChange={_.debounce(onChange, delay)}
-        />
-    )
-}
 
 export default function Assets(props) {
 
@@ -78,12 +66,6 @@ export default function Assets(props) {
                         <Col className="max-content mt-2"><h4 className="header-primary">My Assets</h4></Col>
                         <Col>
                             <SearchText onChange={(assyncQuery) => setQuery(assyncQuery)} />
-                            {/* <Form.Control
-                                value={query}
-                                onChange={handleInputChange}
-                                type="search"
-                                placeholder="search"
-                                className="text-right bg-secondary" /> */}
                         </Col>
                     </Row>
                 </Col>
@@ -111,9 +93,14 @@ const styles = {
         margin: 4,
         flex: 1,
         minWidth: 200,
-        cursor: 'pointer'
+        cursor: 'pointer',
+        backgroundColor: "#fff",
+        display: "flex",
+        alignItems: "center",
+        paddingTop: 8,
     },
     cardImage: {
-        height: 120
+        height: 120,
+        maxWidth: 200
     }
 }

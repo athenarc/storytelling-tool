@@ -231,3 +231,12 @@ h3 {
   opacity: 1;
   transition: 500ms;
 }
+
+.react-slideshow-container [data-type="prev"] {
+  position: absolute !important;
+  left: 10px;
+}
+.react-slideshow-container [data-type="next"] {
+  position: absolute !important;
+  right: 10px;
+}

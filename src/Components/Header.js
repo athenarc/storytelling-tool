@@ -17,7 +17,7 @@ export default function Header(props) {
                     <NavLink to="/assets" style={styles.navlink}>My Assets</NavLink>
                     <NavLink to="/editor" style={styles.navlink}>My Stories</NavLink>
                     <img src={imagePerson} style={{ marginLeft: '15px', marginRight: '-25px', marginTop: '5px', height: '30px' }} />
-                    <SplitButton variant={'link'} >
+                    <SplitButton variant={'link'} alignRight>
                         <Dropdown.Item eventKey="1" onClick={logout}>Logout</Dropdown.Item>
                     </SplitButton>
                 </Nav>

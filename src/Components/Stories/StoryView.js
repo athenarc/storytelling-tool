@@ -16,7 +16,8 @@ export default class StoryView extends Component {
             showEdit: false,
             currentChapterId: null,
             showAssetPicker: false,
-            currentPosition: null
+            currentPosition: null,
+            showEditTitle: false
         }
         this.getStoryById = this.getStoryById.bind(this)
     }
@@ -32,7 +33,21 @@ export default class StoryView extends Component {
         this.setIframe = this.setIframe.bind(this)
     }
 
+    handleUpdateProp = (prop) => (e) => {
+        this.setState({
+            localStory: {
+                ...this.state.localStory,
+                [prop]: e.target.value
+            }
+        })
+    }
 
+    handleUpdateStory() {
+        const story = this.state.localStory
+        updateData(ENDPOINT.STORIES + `/${story.id}`, story)
+            .then(() => this.setState({ showEditTitle: false }))
+            .catch(ex => console.log(ex))
+    }
 
     getStoryById(id) {
         fetchData(ENDPOINT.STORIES + `/${id}`)
@@ -347,11 +362,28 @@ export default class StoryView extends Component {
             return <div className="text-success">Ready to save chapter.</div>
         }
 
+        const title = localStory ? localStory.title : ""
         return (
             <Fragment>
                 <Container className={`mt-5 ${showAssetPicker ? 'd-none' : ''}`} >
                     <Row>
-                        <Col><h4 className="header-primary">{localStory && localStory.title}</h4></Col>
+                        <Col>
+                            {
+                                !this.state.showEditTitle &&
+                                <h4 onClick={() => this.setState({ showEditTitle: true })} className="header-primary">{title}</h4>}
+                            {
+                                this.state.showEditTitle &&
+                                <input
+                                    onKeyPress={(e) => {
+                                        if (e.key === "Enter") {
+                                            this.handleUpdateStory()
+                                        }
+                                    }}
+                                    className="form-control"
+                                    style={{ width: 400 }}
+                                    value={title}
+                                    onChange={this.handleUpdateProp("title")} />}
+                        </Col>
                     </Row>
                     <Row>
                         <Col md={6}></Col>
