@@ -1,29 +1,122 @@
-import React, { useState, useEffect } from 'react'
-import { Container, Button, Row, Col, Form } from 'react-bootstrap'
-import NavButtons from '../Common/NavButtons'
-import Assets from '../Assets'
+import React, { Fragment, useState, useEffect } from 'react'
 import { STORY_TYPES } from '../../resources'
+import { Container, Button, Row, Col, Form } from 'react-bootstrap'
+import DatePicker from 'react-datepicker'
+import NavButtons from '../lib/NavButtons'
+import "react-datepicker/dist/react-datepicker.css";
+import Assets from '../Assets'
+import { postData } from '../../utils'
+import { ENDPOINT } from '../../config'
+
+const StorySchema = {
+    id: null,
+    title: "",
+    description: "",
+    category: null,
+    chapters: [{
+        title: "Introdution",
+        description: "",
+        assets: []
+    }],
+    startDate: null,
+    endDate: null
+}
 
 export default function StoryForm(props) {
 
-    const { story, updateStory, showAssetsInsideStoryForm, toggleAssetsInsideStoryForm } = props
-    const [_story, setStory] = useState({})
     const storyType = props.match.params.type
-
-    const onNext = () => {
-        updateStory({ ..._story, category: getStoryCategory() })
-        toggleAssetsInsideStoryForm()
-    }
+    const [step, setStep] = useState(0)
+    const [story, setStory] = useState({ ...StorySchema })
 
     useEffect(() => {
-        //if (showAssetsInsideStoryForm) toggleAssetsInsideStoryForm()
-        setStory(story)
-    }, [story])
+        setStory({
+            ...StorySchema,
+            category: getStoryCategory()
+        })
+    }, [storyType])
 
-    const goBack = () => {
-        showAssetsInsideStoryForm
-            ? toggleAssetsInsideStoryForm()
-            : props.history.push('/workspace')
+
+    const handleUpdateProp = (prop) => (e) => {
+        const value = e.target ? e.target.value : e
+        // reset end date if the start date is changed
+        const storyToUpdate = { ...story, [prop]: value }
+        if (prop === "startDate" && prop !== "endDate") {
+            storyToUpdate.endDate = null
+        }
+        setStory(storyToUpdate)
+    }
+
+    const updateChapterDescription = (e) => {
+        setStory({
+            ...story,
+            chapters: [{
+                ...story.chapters[0],
+                description: e.target.value
+
+            }]
+        })
+    }
+
+    const handleAssetClick = (model) => {
+        setStory({
+            ...story,
+            chapters: [{
+                ...story.chapters[0],
+                assets: [{
+                    ...model
+                }]
+            }]
+        })
+        setStep(step + 1)
+    }
+
+    const handlePrevious = () => {
+        if (step === 0) {
+            window.history.back()
+        } else {
+            setStep(step - 1)
+        }
+    }
+
+    const handleNext = () => {
+        setStep(step + 1)
+    }
+
+    const hasRequiredToGoNext = () => {
+        if (!story.title || !story.description) return false
+        if (!story.chapters[0].assets[0] && step === 1) return false
+        if (step === 2) return false
+        return true
+    }
+    const hasRequiredToSave = () => {
+        return step === 2 && story.chapters[0].description
+    }
+
+    const onSave = () => {
+        postData(ENDPOINT.STORIES, {
+            title: story.title,
+            description: story.description,
+            category: story.category,
+            startDate: story.startDate,
+            endDate: story.endDate
+        }).then((_story) => {
+
+            postData(ENDPOINT.STORIES + `/${_story.id}/chapters`, {
+                title: story.chapters[0].title,
+                description: story.chapters[0].description,
+            }).then((data) => {
+
+                postData(ENDPOINT.STORIES + `/${_story.id}/chapters/${data.chapters[0].id}/assets`, {
+                    ...story.chapters[0].assets[0]
+                }).then(() => {
+
+                    props.history.push('/stories/' + _story.id + "/edit")
+
+                }).catch(ex => console.log(ex))
+
+            }).catch(ex => console.log(ex))
+
+        }).catch(ex => console.log(ex))
     }
 
     const getStoryCategory = () => {
@@ -52,21 +145,7 @@ export default function StoryForm(props) {
         }
     }
 
-    const onAssetClick = (model) => {
-        updateStory({
-            ...story,
-            chapters: [{
-                title: "Introduction",
-                description: "Introduction Slide",
-                assets: [{
-                    ...model
-                }]
-            }]
-        })
-        props.history.push('/editor/new')
-    }
-
-    const getContent = () => {
+    const stepOne = () => {
         return <Container className="mt-5">
             <Row>
                 <Col lg={8}>
@@ -77,33 +156,128 @@ export default function StoryForm(props) {
                             <p className="body-secondary mt-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.</p>
                         </Col>
                         <Col lg={5}>{getStoryImage()}</Col>
-
                     </Row>
-
                     <Row className="mt-4">
                         <Col>
                             <Form.Group>
-                                <Form.Label className="body-secondary" style={{ fontWeight: 500 }}>Story title</Form.Label>
-                                <Form.Control value={_story.title} onChange={(e) => setStory({ ..._story, title: e.target.value })} type="text" />
+                                <Form.Label
+                                    className="body-secondary"
+                                    style={{ fontWeight: 500 }}>
+                                    Story title
+                                            </Form.Label>
+                                <Form.Control
+                                    value={story.title}
+                                    onChange={handleUpdateProp("title")}
+                                    type="text" />
                             </Form.Group>
                             <Form.Group>
-                                <Form.Label className="body-secondary" style={{ fontWeight: 500 }}>Description</Form.Label>
-                                <Form.Control value={_story.description} onChange={(e) => setStory({ ..._story, description: e.target.value })} as="textarea" rows="3" />
+                                <Form.Label
+                                    className="body-secondary"
+                                    style={{ fontWeight: 500 }}>
+                                    Description
+                                    </Form.Label>
+                                <Form.Control
+                                    value={story.description}
+                                    onChange={handleUpdateProp("description")}
+                                    as="textarea"
+                                    rows="3" />
                             </Form.Group>
 
+                            {storyType === STORY_TYPES.TIMELINE &&
+                                <div className="d-flex">
+                                    <Form.Group>
+                                        <Form.Label
+                                            className="body-secondary"
+                                            style={{ fontWeight: 500 }}>
+                                            From
+                                    </Form.Label>
+                                        <Form.Control
+                                            value={story.startDate}
+                                            onChange={handleUpdateProp("startDate")} />
+                                    </Form.Group>
+                                    <Form.Group className="ml-2">
+                                        <Form.Label
+                                            className="body-secondary"
+                                            style={{ fontWeight: 500 }}>
+                                            To
+                                    </Form.Label>
+                                        <Form.Control
+                                            value={story.endDate}
+                                            onChange={handleUpdateProp("endDate")} />
+                                    </Form.Group>
+                                </div>
+                            }
                         </Col>
                     </Row>
-
-
                 </Col>
             </Row>
-
         </Container>
     }
+
+    const stepThree = () => {
+        let preview = null
+        const asset = story.chapters[0].assets[0]
+        const hasModel = asset && asset.embedUrl
+        if (hasModel) {
+            preview = <iframe src={asset.embedUrl} id="api-frame" className="w-100" style={{ height: 480 }}></iframe>
+        } else {
+            preview = <img style={{ width: 100 + '%' }} alt="" src={asset.thumbnail} />
+        }
+        return <Container className="mt-5">
+            <Row>
+                <Col>
+                    <h4 className="header-primary">{story.title}</h4>
+                </Col>
+            </Row>
+            <Row>
+                <Col md={6}></Col>
+                <Col md={6}>
+                    <Form.Label
+                        className="body-secondary">
+                        {story.chapters[0].title}
+                    </Form.Label>
+                </Col>
+            </Row>
+            <Row>
+                <Col md={6} className="p-3">
+                    {preview}
+                </Col>
+                <Col className="p-3">
+                    <Form.Control
+                        value={story.chapters[0].description}
+                        onChange={updateChapterDescription}
+                        as="textarea"
+                        rows="12" />
+                </Col>
+            </Row>
+        </Container>
+    }
+
+
+    const stepTwo = () => {
+        return <Assets onAssetClick={handleAssetClick} />
+    }
+
+
+    const getUiForStep = (step) => {
+        switch (step) {
+            case 0: return stepOne()
+            case 1: return stepTwo()
+            case 2: return stepThree()
+            default: return stepOne()
+        }
+    }
+
     return (
-        <>
-            {!showAssetsInsideStoryForm ? getContent() : <Assets onAssetClick={onAssetClick} />}
-            <NavButtons onPrevious={goBack} onNext={onNext} hasNext={_story.title && _story.description && !showAssetsInsideStoryForm} />
-        </>
+        <Fragment>
+            {getUiForStep(step)}
+            <NavButtons
+                onPrevious={handlePrevious}
+                onNext={handleNext}
+                hasSave={hasRequiredToSave()}
+                onSave={onSave}
+                hasNext={hasRequiredToGoNext()}
+            />
+        </Fragment>
     )
 }

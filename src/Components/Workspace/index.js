@@ -31,7 +31,7 @@ export default function Workspace(props) {
                         <Col className="my-auto" sm={6}><img alt="" src={require('../../assets/story-2.png')} width={200} /></Col>
 
                         <Col sm={6} className="p-3">
-                            <Button variant="primary" disabled>Timeline</Button>
+                            <Link to={`/workspace/${STORY_TYPES.TIMELINE}`} className="btn btn-primary">Timeline</Link>
                             {/* <Link to={`/workspace/${STORY_TYPES.TIMELINE}`} className="btn btn-primary">Timeline</Link> */}
                             <p className="body-secondary mt-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.</p>
                         </Col>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Table, Row, Col, Button, Container, Modal } from 'react-bootstrap'
+import { Row, Col, Button, Container, Modal } from 'react-bootstrap'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faTrashAlt, faCaretRight } from '@fortawesome/free-solid-svg-icons'
 import { fetchData, postData, deleteData, maxLetters } from '../../utils'
 import { ENDPOINT } from '../../config'
@@ -58,11 +57,11 @@ const Stories = (props) => {
     const deleteStory = () => {
         if (showModalDelete) {
             deleteData(ENDPOINT.STORIES + `/${deleteStoryId}`, null)
-                .then(
+                .then(() => {
                     setStories(stories.filter(function (story) {
                         return story.id !== deleteStoryId
                     }))
-                )
+                })
                 .catch(ex => console.log(ex))
             setShowModalDelete(false)
         }
@@ -71,11 +70,11 @@ const Stories = (props) => {
     const publishStory = () => {
         if (showModalShare) {
             postData(ENDPOINT.STORIES + `/${shareStoryId}/publish`, null)
-                .then(
+                .then(() => {
                     fetchData(ENDPOINT.STORIES)
                         .then(data => setStories(data))
                         .catch(ex => console.log(ex))
-                )
+                })
                 .catch(ex => console.log(ex))
             setShowModalShare(false)
         }
@@ -110,8 +109,8 @@ const Stories = (props) => {
                 <div className="body-secondary">{maxLetters(story.description, 250)}</div>
                 <Row className="mt-auto">
                     <Col style={styles.maxContent}><Button variant={story.isPublic ? 'success' : 'primary'}>{story.isPublic ? 'Published' : 'Private'}</Button></Col>
-                    <Col style={styles.maxContent}><Button variant="secondary" onClick={() => props.history.push(`/story/${story.id}`)}>View</Button></Col>
-                    <Col style={styles.maxContent}><Button variant="secondary" onClick={() => props.history.push(`/editor/${story.id}`)}>Edit</Button></Col>
+                    <Col style={styles.maxContent}><Button variant="secondary" onClick={() => props.history.push(`/stories/${story.id}/view`)}>View</Button></Col>
+                    <Col style={styles.maxContent}><Button variant="secondary" onClick={() => props.history.push(`/stories/${story.id}/edit`)}>Edit</Button></Col>
                     <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmDelete(story.id)}>Delete</Button></Col>
                     {!story.isPublic && <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmShare(story.id)}>Share</Button></Col>}
                     {story.isPublic && <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmUnShare(story.id)}>UnShare</Button></Col>}

@@ -34,7 +34,7 @@ function Login(props) {
         <Fragment>
             {
                 !props.isLoading && props.isAuth
-                    ? <Redirect to='/' />
+                    ? <Redirect to='/home' />
                     : loginForm()
             }
         </Fragment>

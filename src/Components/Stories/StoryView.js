@@ -1,203 +1,79 @@
-import React, { Component, Fragment, useState, useEffect } from 'react'
-import { Container, Row, Col, Form, Button } from 'react-bootstrap'
-import { fetchData, postData, post, deleteData, updateData } from '../../utils'
-import { ENDPOINT } from '../../config'
-import NavButtons from '../Common/NavButtons'
-import { STORY_TYPES } from '../../resources'
-import Assets from '../Assets'
+import React, { Component } from 'react';
+import { Slide } from 'react-slideshow-image';
+import { fetchData } from '../../utils';
+import { ENDPOINT } from '../../config';
+import { Container, Row, Col, Spinner, Button } from 'react-bootstrap'
+import HorizontalTimeline from 'react-horizontal-timeline'
 
+const properties = {
+    duration: 50000000,
+    transitionDuration: 500,
+    infinite: true,
+    indicators: true,
+    arrows: true,
+}
 
 export default class StoryView extends Component {
+
+    // api.gotoAnnotation(0);
 
     constructor(props) {
         super(props)
         this.state = {
-            localStory: null,
-            showEdit: false,
-            currentChapterId: null,
-            showAssetPicker: false,
-            currentPosition: null,
-            showEditTitle: false
+            api: null,
+            story: null,
+            chpaterIndex: 0,
         }
         this.getStoryById = this.getStoryById.bind(this)
+        this.handleChangeSlide = this.handleChangeSlide.bind(this)
     }
 
+    handleChangeSlide(oldIndex, newIndex) {
+        this.setState({ chpaterIndex: newIndex })
+    }
+
+    handle3dNavigation(direction) {
+        if (this.state.story.chapters.length <= 1) return
+        const totalChapters = this.state.story.chapters.length - 1
+        const index = this.state.chpaterIndex
+
+
+        if (direction === 'next') {
+            if (index === totalChapters - 1) {
+                this.state.api.gotoAnnotation(0)
+            } else {
+                this.state.api.gotoAnnotation(index + 1)
+            }
+
+        } else {
+            if (index === 0) {
+                this.state.api.gotoAnnotation(totalChapters - 1)
+            } else {
+                this.state.api.gotoAnnotation(index - 1)
+            }
+
+        }
+    }
 
     componentDidMount() {
-        this.setState({ localStory: this.props.story })
+        this.setState({ chpaterIndex: 0 })
         this.getStoryById(this.props.match.params.id)
-        this.handleNewChapter = this.handleNewChapter.bind(this)
-        this.handleChapter = this.handleChapter.bind(this)
-        this.handleAssetClick = this.handleAssetClick.bind(this)
-        this.handleAnnotation = this.handleAnnotation.bind(this)
-        this.setIframe = this.setIframe.bind(this)
-    }
-
-    handleUpdateProp = (prop) => (e) => {
-        this.setState({
-            localStory: {
-                ...this.state.localStory,
-                [prop]: e.target.value
-            }
-        })
-    }
-
-    handleUpdateStory() {
-        const story = this.state.localStory
-        updateData(ENDPOINT.STORIES + `/${story.id}`, story)
-            .then(() => this.setState({ showEditTitle: false }))
-            .catch(ex => console.log(ex))
     }
 
     getStoryById(id) {
         fetchData(ENDPOINT.STORIES + `/${id}`)
             .then((data) => {
-                this.setState({ localStory: data })
+                this.setState({ story: data })
                 return data
                 // if (!data.chapters[0]) props.history.push('/workspace')
             })
-            .then((localStory) => {
-                console.log(localStory)
-                this.setIframe(localStory)
+            .then((story) => {
+                this.setIframe(story)
             })
             .catch((ex) => {
                 // props.history.push('/workspace')
             })
     }
-
-    handleNewChapter = (id) => {
-        const chapter = this.state.localStory.chapters.find(x => x.id === id)
-        if (!id) {
-            this.setState({
-                localStory: {
-                    ...this.state.localStory,
-                    chapters: [
-                        ...this.state.localStory.chapters,
-                        { id: -1, title: "", description: "", position: "", assets: [] }
-                    ]
-                }
-            })
-        }
-        this.setState({
-            currentChapterId: chapter ? chapter.id : -1,
-            showEdit: true,
-            currentPosition: chapter ? chapter.position : null
-        })
-    }
-
-    handleChapter = (prop) => (event) => {
-        const value = event.target.value
-        this.setState({
-            localStory: {
-                ...this.state.localStory,
-                chapters: [
-                    ...this.state.localStory.chapters.map(ch => {
-                        if (ch.id === this.state.currentChapterId) {
-                            return {
-                                ...ch,
-                                [prop]: value
-                            }
-                        }
-                        return ch
-                    }),
-                ]
-
-            }
-        })
-    }
-
-    handleSaveChapter = () => {
-        const currentChapter = this.state.localStory && this.state.localStory.chapters.find(x => x.id === this.state.currentChapterId)
-        // New chapter
-        if (currentChapter.id === -1) {
-            const payload = {
-                title: currentChapter.title,
-                description: currentChapter.description,
-                position: this.wrapPosition()
-            }
-            postData(ENDPOINT.STORIES + `/${this.state.localStory.id}/chapters`, payload)
-                .then((data) => {
-                    this.setState({ showEdit: false })
-                    this.setState({ currentPosition: null })
-                    if (!currentChapter.assets[0]) return this.getStoryById(this.state.localStory.id)
-                    const payload = { ...currentChapter.assets[0] }
-                    postData(ENDPOINT.STORIES + `/${this.state.localStory.id}/chapters/${data.chapters[data.chapters.length - 1].id}/assets`, payload)
-                        .then(() => {
-                            // force update the current story after one save
-                            this.getStoryById(this.state.localStory.id)
-                        }).catch(ex => console.log(ex))
-                }).catch(ex => console.log(ex))
-        } else {
-            // TODO: update chapter here...
-            const payload = {
-                title: currentChapter.title,
-                description: currentChapter.description,
-                position: this.wrapPosition()
-            }
-            updateData(ENDPOINT.STORIES + `/${this.state.localStory.id}/chapters/${currentChapter.id}`, payload)
-                .then((data) => {
-                    this.setState({ showEdit: false })
-                    this.setState({ currentPosition: null })
-                    return this.getStoryById(this.state.localStory.id)
-                    // const payload = { ...currentChapter.assets[0] }
-                    // postData(ENDPOINT.STORIES + `/${this.state.localStory.id}/chapters/${data.chapters[data.chapters.length - 1].id}/assets`, payload)
-                    //     .then(() => {
-                    //         // force update the current story after one save
-                    //         this.getStoryById(this.state.localStory.id)
-                    //     }).catch(ex => console.log(ex))
-                }).catch(ex => console.log(ex))
-        }
-    }
-
-
-    handleNewStory = () => {
-        const { localStory } = this.state
-
-        postData(ENDPOINT.STORIES, {
-            title: localStory.title,
-            description: localStory.description,
-            category: localStory.category
-        }).then((_story) => {
-
-            postData(ENDPOINT.STORIES + `/${_story.id}/chapters`, {
-                title: localStory.chapters[0].title,
-                description: localStory.chapters[0].description,
-            }).then((data) => {
-
-                postData(ENDPOINT.STORIES + `/${_story.id}/chapters/${data.chapters[0].id}/assets`, {
-                    ...localStory.chapters[0].assets[0]
-                }).then(() => {
-
-                    this.props.history.push('/editor/' + _story.id)
-                    this.getStoryById(_story.id)
-
-                }).catch(ex => console.log(ex))
-
-            }).catch(ex => console.log(ex))
-
-        }).catch(ex => console.log(ex))
-    }
-
-    handleAssetClick = (model) => {
-        this.setState({
-            localStory: {
-                ...this.state.localStory,
-                chapters: [
-                    ...this.state.localStory.chapters.map(ch => {
-                        if (ch.id === this.state.currentChapterId) {
-                            return {
-                                ...ch,
-                                assets: [{ ...model }]
-                            }
-                        }
-                        return ch
-                    })
-                ]
-            },
-            showAssetPicker: false
-        })
-    }
-
 
     setIframe(story) {
         const iframe = document.getElementById('api-frame');
@@ -205,7 +81,6 @@ export default class StoryView extends Component {
         const version = '1.5.2';
         const client = new window.Sketchfab(version, iframe);
         const uid = story.chapters[0].assets[0].uid
-
 
         client.init(
             uid,
@@ -215,12 +90,16 @@ export default class StoryView extends Component {
                     api.load()
                     api.start()
                     api.addEventListener('viewerready', () => {
+                        this.setState({ api })
                         story.chapters.forEach(ch => {
                             this.handleAnnotation(api, ch)
                         });
                     });
                     // this.setSketchFab(api)
                     // this.apiEventListeners()
+                    api.addEventListener('annotationSelect', (index) => {
+                        this.setState({ chpaterIndex: index })
+                    });
                     api.addEventListener(
                         'click',
                         (info) => {
@@ -241,6 +120,10 @@ export default class StoryView extends Component {
     }
 
     handleAnnotation = (api, chapter) => {
+        let chapterDesc = chapter.description;
+        if (chapter.assets && chapter.assets[0]) {
+            chapterDesc = chapter.description + "<br/><img alt='' src='" + chapter.assets[0].thumbnail + "' height='30' style={styles.embedImage} />"
+        }
         api.getAnnotationList((err, annotations) => {
             annotations.forEach((an, index) => {
                 // IMPORTANT: Quick Fix
@@ -257,185 +140,198 @@ export default class StoryView extends Component {
                         [position[0] * 3, position[1] * 3, position[2] * 2],
                         camera.target,
                         chapter.title,
-                        chapter.description
+                        chapterDesc
                     );
             })
 
         });
     }
 
-
-
-    handleBack() {
-        this.props.history.push('/workspace')
-    }
-
-    wrapPosition() {
-        return this.state.currentPosition
-            ? JSON.stringify([this.state.currentPosition[0], this.state.currentPosition[1], this.state.currentPosition[2]])
-            : null
-    }
-
-
     render() {
-        const { localStory, currentChapterId, showAssetPicker, showEdit } = this.state
-        const currentChapter = localStory && localStory.chapters.find(x => x.id === currentChapterId)
-        console.log(localStory && localStory.chapters)
+        const { story, chpaterIndex } = this.state
+        const is3dModel = story && story.category === 2 && story.chapters[0].assets[0].embedUrl
+        const _chIndex = is3dModel ? chpaterIndex + 1 : chpaterIndex
 
-        const getIntroPreview = () => {
-            if (!localStory) return null
-            if (!localStory.chapters[0]) return null
-            const chapter = localStory && localStory.chapters[0]
-            const asset = chapter.assets[0]
-            const hasModel = asset.embedUrl
-            if (hasModel) {
-                return <iframe src={asset.embedUrl} id="api-frame" className="w-100" style={{ height: 480 }}></iframe>
-            } else {
-                return <img style={{ width: 100 + '%' }} alt="" src={asset.thumbnail} />
+        const getChapters = () => {
+            const chapters = story ? story.chapters : []
+            return chapters
+                .filter(ch => ch.assets[0])
+                .map((ch, index) => {
+                    const asset = ch.assets[0]
+                    return <div className="each-slide" style={{ position: 'relative' }} key={index}>
+                        {!asset.embedUrl &&
+                            <div className="carousel-image-container" style={{ 'backgroundImage': `url(${asset.thumbnail})`, height: 480 }} />
+                            // <div className="carousel-image-container">
+                            //     <img alt="" src={asset.thumbnail} styles={{ height: 480, maxWidth: 100 + '%' }} />
+                            // </div>
+                        } {
+                            asset.embedUrl &&
+                            <iframe className="w-100" src={asset.embedUrl} style={{ height: 480 }}></iframe>
+
+                        }
+                    </div>
+                })
+        }
+
+        const getValue = (prop, inSlide) => {
+            if (inSlide) {
+                const chapters = story && story.chapters[_chIndex]
+                const asset = chapters && chapters.assets[0]
+                return asset ? asset[prop] : '-'
+            }
+            return story ? story[prop] : '-'
+        }
+        const getCategoryTitle = (category) => {
+            switch (category) {
+                case 1: return "Slideshow"
+                case 2: return "Hotspot"
+                case 3: return "Timeline"
+                default: return "-"
             }
         }
 
-        const getSlides = (chapters) => {
-            const items = chapters.map(ch => {
-                return <li key={ch.id} style={{ display: 'flex' }} className="m-2">
-                    <a className="body-primary p-2 mr-auto">{ch.title}</a>
-                    <Button onClick={() => this.handleNewChapter(ch.id)} className="btn btn-primary">Edit</Button>
-                </li>
-            })
-            items.push(<li key={-2} style={{ display: 'flex' }} className="m-2">
-                <a className="body-primary p-2 mr-auto">Slide</a>
-                <Button disabled={localStory && localStory.chapters.find(x => x.id === -1)} onClick={() => this.handleNewChapter(null)} className="btn btn-primary">Add</Button>
-            </li>)
-            return items
-        }
+        const getCommonView = () => {
 
-        const getChapterAssets = () => {
-            if (currentChapter && currentChapter.assets[0])
-                return currentChapter.assets.map(asset => {
-                    return <Col md={12} className="mb-3 px-0">
-                        <img style={{ width: 100 + '%' }} alt="" src={asset.thumbnail} />
-                    </Col>
-                })
+            const chapter = story.chapters[this.state.chpaterIndex]
+            // const asset = chapter.assets[0]
 
-        }
+            return <Row style={{ flex: 1 }} className="pb-5">
+                <Col sm={3} className="p-0">
+                    <div className="d-flex flex-column" style={{ height: 100 + '%' }}>
 
-        const deleteChpater = () => {
-            const chapter = this.state.localStory.chapters.find(x => x.id === this.state.currentChapterId)
-            if (chapter.id === -1) {
-                this.setState({
-                    showEdit: false,
-                    localStory: {
-                        ...this.state.localStory,
-                        chapters: this.state.localStory.chapters.filter(x => x.id !== -1)
+                        <div className="d-flex flex-column" style={styles.overlay}>
+                            <div className="font-weight-bold">{getValue('description')}</div>
+                            <div className="mt-2">Published: {new Date(getValue('createdAt')).toDateString()}</div>
+                            <div className="font-italic"> Category: {getCategoryTitle(story.category)}</div>
+                        </div>
+
+                        <div className="d-flex bg-white p-1  align-items-center">
+                            <img className="mx-1" alt="" width="20" height="20" src={require('../../assets/ico-person.png')} />
+                            <div className="mx-1 mr-auto f-12">{story.createdBy.name}</div>
+
+                            <img className="mx-1" alt="" width="20" height="20" src={require('../../assets/ico-person.png')} />
+                            <div className="mx-1 body-secondary f-12">{getValue('viewsCount')}</div>
+
+                            <img className="mx-1" alt="" width="20" height="20" src={require('../../assets/ico-person.png')} />
+                            <div className="mx-1 body-secondary f-12">{getValue('commentsCount')}</div>
+
+                            <img className="mx-1" alt="" width="20" height="20" src={require('../../assets/ico-person.png')} />
+                            <div className="mx-1 body-secondary f-12">{getValue('starredCount')}</div>
+                        </div>
+
+                        <div className="d-flex flex-column py-2" style={{ flex: 1, maxHeight: 400, overflow: 'auto' }}>
+                            <h5 className="header-primary">{chapter && chapter.title}</h5>
+                            <div style={{ flex: 1 }} className="body-secondary f-14">
+                                {chapter && chapter.description}
+                                <br />
+                                {/* {
+                                    story.category === 1 &&
+                                    <img alt="" src={asset && asset.thumbnail} style={{ maxWidth: 240, maxHeight: 240 }} />
+                                } */}
+                            </div>
+
+                            {/* <div className="d-flex flex-column">
+                                <img className="mt-auto" alt="" src={require('../../assets/ico-person.png')} width="30" height="30" />
+                                <img alt="" src={require('../../assets/ico-person.png')} width="30" height="30" />
+                                <img alt="" src={require('../../assets/ico-person.png')} width="30" height="30" />
+                                <img alt="" src={require('../../assets/ico-person.png')} width="30" height="30" />
+                            </div> */}
+                        </div>
+
+                    </div>
+                </Col>
+                <Col sm={9} className="p-0">
+                    {
+                        is3dModel
+                            ? <div className="react-slideshow-container">
+                                <div onClick={() => this.handle3dNavigation('previous')} className="nav" data-type="prev"><span></span></div>
+                                <iframe id="api-frame" className="w-100" style={{ height: 480 }}></iframe>
+                                <div onClick={() => this.handle3dNavigation('next')} className="nav" data-type="next"><span></span></div>
+                            </div>
+                            : <Slide onChange={this.handleChangeSlide} {...properties}>
+                                {getChapters()}
+                            </Slide>
                     }
-                })
-            } else {
-                deleteData(ENDPOINT.STORIES + `/${this.state.localStory.id}/chapters/${chapter.id}`)
-                    .then(() => {
-                        this.setState({ showEdit: false })
-                        this.getStoryById(this.state.localStory.id)
-                    }).catch(ex => console.log(ex))
+                </Col>
+            </Row>
+        }
+
+        const getTimelineView = () => {
+            const dates = story.chapters.map(ch => {
+                return ch.startDate || story.startDate
+            })
+            const chapter = story.chapters[this.state.chpaterIndex]
+            const asset = chapter.assets[0]
+
+            const dateFormatter = (date) => {
+                return <span className="events-date-view">{date}</span>
             }
+
+            return <Row>
+                <Col>
+                    {/* Bounding box for the Timeline */}
+                    <div className='d-flex justify-content-between mb-4'>
+                        <div className="d-flex flex-column p-5">
+                            <h4 className="header-primary">
+                                {chapter.title}
+                            </h4>
+                            <div className="body-secondary">
+                                {chapter.description}
+                            </div>
+                        </div>
+                        <div className="d-flex">
+                            <img alt="" src={asset && asset.thumbnail} style={{ width: 700, maxHeight: 400 }} />
+                        </div>
+                        {/* any arbitrary component can go here */}
+                    </div>
+                    <div className="d-flex" style={{ width: '100%', height: '100px', margin: '0 auto' }}>
+                        <HorizontalTimeline
+                            styles={{ background: 'transparent', foreground: '#fff', outline: '#707070' }}
+                            index={this.state.chpaterIndex}
+                            getLabel={dateFormatter}
+                            indexClick={(index) => {
+                                this.setState({ chpaterIndex: index, previous: this.state.chpaterIndex });
+                            }}
+                            values={dates} />
+                    </div>
+                </Col>
+            </Row>
         }
 
-        const canSave = () => {
-            const currentChapter = this.state.localStory && this.state.localStory.chapters.find(x => x.id === this.state.currentChapterId)
-            if (!currentChapter.description || !currentChapter.title) return false
-            if (localStory.category === 2 && localStory.chapters[0].assets[0].embedUrl && !this.state.currentPosition && this.state.currentChapterId !== this.state.localStory.chapters[0].id) {
-                return false
-            }
-            return true
+        const getPreview = () => {
+            if (!story)
+                return <Spinner size={50} classes={"my-4"} />
+            else if (story.category === 3)
+                return getTimelineView()
+            else
+                return getCommonView()
         }
 
-        const canDelete = () => {
-            if (this.state.currentChapterId === this.state.localStory.chapters[0].id) {
-                return false
-            }
-            return true
-        }
-
-        const getRequiredInputDescription = () => {
-            if (this.state.currentChapterId === this.state.localStory.chapters[0].id) return <></>
-            const currentChapter = this.state.localStory && this.state.localStory.chapters.find(x => x.id === this.state.currentChapterId)
-            if (!currentChapter.description || !currentChapter.title) return <div className="text-danger">Chapter title and chapter description are required fields.</div>
-            if (localStory.category === 2 && localStory.chapters[0].assets[0].embedUrl && !this.state.currentPosition) return <div className="text-danger">Please click somewhere on the model to add the chapter.</div>
-            return <div className="text-success">Ready to save chapter.</div>
-        }
-
-        const title = localStory ? localStory.title : ""
         return (
-            <Fragment>
-                <Container className={`mt-5 ${showAssetPicker ? 'd-none' : ''}`} >
-                    <Row>
-                        <Col>
-                            {
-                                !this.state.showEditTitle &&
-                                <h4 onClick={() => this.setState({ showEditTitle: true })} className="header-primary">{title}</h4>}
-                            {
-                                this.state.showEditTitle &&
-                                <input
-                                    onKeyPress={(e) => {
-                                        if (e.key === "Enter") {
-                                            this.handleUpdateStory()
-                                        }
-                                    }}
-                                    className="form-control"
-                                    style={{ width: 400 }}
-                                    value={title}
-                                    onChange={this.handleUpdateProp("title")} />}
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col md={6}></Col>
-                        <Col md={6}>
-                            {localStory && !localStory.id && <Form.Label className="body-secondary">Introduction</Form.Label>}
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col md={6} className="p-3">
-                            {getIntroPreview()}
-                        </Col>
-                        <Col className="p-3">
-                            {localStory && !localStory.id && <Form.Control as="textarea" rows="12" />}
-                            {localStory && localStory.id && getSlides(localStory.chapters)}
-                        </Col>
-                        {showEdit &&
-                            <Col>
-                                <Form.Group>
-                                    <Form.Label className="body-secondary" style={{ fontWeight: 500 }}>Chapter title</Form.Label>
-                                    <Form.Control value={currentChapter.title} onChange={this.handleChapter('title')} type="text" />
-                                </Form.Group>
-                                <Form.Group>
-                                    <Form.Label className="body-secondary" style={{ fontWeight: 500 }}>Chapter Description</Form.Label>
-                                    <Form.Control value={currentChapter.description} onChange={this.handleChapter('description')} as="textarea" rows="3" />
-                                </Form.Group>
-                                <Container className="mt-3">
-                                    <Row >
-                                        {getChapterAssets()}
-                                    </Row>
-                                </Container>
-                                <Form.Group>
-                                    <Button variant="primary" onClick={() => this.setState({ showAssetPicker: true })}>Select Asset</Button>
-                                </Form.Group>
-                                <Form.Group>
-                                    <Form.Text className="text-muted">
-                                        {getRequiredInputDescription()}
-                                    </Form.Text>
-                                </Form.Group>
-                                <Form.Group>
-                                    <Button variant="secondary" className="mx-1" disabled={!canDelete()} onClick={deleteChpater}>Delete</Button>
-                                    <Button variant="secondary" className="mx-1" disabled={!canSave()} onClick={this.handleSaveChapter}>Save</Button>
-                                </Form.Group>
-
-                            </Col>}
-                    </Row>
-                    <NavButtons onPrevious={this.handleBack} hasSave={localStory && !localStory.id} onSave={this.handleNewStory} />
-                </Container>
-                <span className={`mt-5 ${!showAssetPicker ? 'd-none' : ''}`}>
-                    <Assets onAssetClick={this.handleAssetClick} />
-                    <NavButtons onPrevious={() => this.setState({ showAssetPicker: false })} />
-                </span>
-            </Fragment>
+            <Container className="d-flex flex-column" style={{ height: "calc(100vh - 80px)" }}>
+                <Row className="py-5">
+                    <h2 className="header-primary">{getValue('title')}</h2>
+                </Row>
+                {getPreview()}
+            </Container>
         )
     }
+}
+
+const styles = {
+    text: { fontFamily: "museo-sans, sans-serif", color: "#fff" },
+    overlay: {
+        backgroundColor: 'rgba(184, 145, 32, 0.8)',
+        padding: 8,
+        color: '#fff',
+        fontFamily: "museo-sans, sans-serif",
+        fontSize: 14
+    },
+    embedImage: {
+        maxWidth: 30,
+        maxHeight: 30
+    },
+    image: { height: 180, width: 'auto', margin: 'auto' },
+    imageContainer: { flex: 1, backgroundColor: '#fff', position: 'relative' },
+    container: { flex: 1, minWidth: 200, margin: 4 }
 }
