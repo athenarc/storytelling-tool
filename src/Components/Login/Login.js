@@ -1,12 +1,14 @@
 import React, { useState, Fragment } from 'react'
-import { Card, Button, Form } from 'react-bootstrap'
+import { Card, Button, Form, Container, Row, Col } from 'react-bootstrap'
 import { Redirect } from 'react-router-dom'
 import backgroundImage from '../../assets/background.jpg';
+import ResetPassword from './ResetPassword';
 
 function Login(props) {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [openReset, setOpenReset] = useState(false)
 
     const loginForm = () => (
         <div style={styles.container}>
@@ -23,18 +25,33 @@ function Login(props) {
                     </Form.Group>
                     <Button variant="primary" onClick={() => props.login(email, password)}>Login</Button>
                     <hr />
-                    <Form.Text className="text-muted">
-                        Don't have an account? <Button variant="link" style={styles.link} onClick={() => props.history.push('/register')}>Register</Button>
-                    </Form.Text>
+                    <Container>
+                        <Row>
+                            <Col>
+                                <Form.Text className="text-muted text-center">
+                                    Don't have an account? <Button variant="link" style={styles.link} onClick={() => props.history.push('/register')}>Register</Button>
+                                </Form.Text>
+                            </Col>
+                            <Col>
+                                <Form.Text className="text-muted text-center">
+                                    Forgotten password? <Button variant="link" style={styles.link} onClick={() => setOpenReset(true)}>Reset here</Button>
+                                </Form.Text>
+                            </Col>
+                        </Row>
+                    </Container>
                 </Card.Body>
             </Card>
+            <ResetPassword
+                handleClose={() => setOpenReset(false)}
+                show={openReset}
+            />
         </div>
     )
     return (
         <Fragment>
             {
                 !props.isLoading && props.isAuth
-                    ? <Redirect to='/' />
+                    ? <Redirect to='/home' />
                     : loginForm()
             }
         </Fragment>

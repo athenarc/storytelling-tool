@@ -1,12 +1,9 @@
-import React, { useState, Fragment } from 'react'
-import { Card, Button, Form } from 'react-bootstrap'
+import React, { Fragment } from 'react'
+import { Card } from 'react-bootstrap'
 import { Redirect, Link } from 'react-router-dom'
 import backgroundImage from '../../assets/background.jpg';
 
 function Home(props) {
-
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
 
     const homeCards = () => (
         <div style={styles.wrapper}>

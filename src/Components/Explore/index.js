@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Table, Row, Col, Button, Container, Modal, Form } from 'react-bootstrap'
+import { Row, Col, Container, Form } from 'react-bootstrap'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faTrashAlt, faCaretRight } from '@fortawesome/free-solid-svg-icons'
-import { fetchData, deleteData } from '../../utils'
+import { fetchData } from '../../utils'
 import { ENDPOINT } from '../../config'
 import imagePlaceholder from '../../assets/image-placeholder.png';
 import StoryItem from './StoryItem'
@@ -15,7 +14,7 @@ const Explore = (props) => {
     const [query, setQuery] = useState("")
 
     useEffect(() => {
-        fetchData(ENDPOINT.STORIES)
+        fetchData(ENDPOINT.STORIES_PUBLIC)
             .then(data => setStories(data))
             .catch(ex => console.log(ex))
         // return () => {
@@ -66,13 +65,3 @@ const Explore = (props) => {
 }
 
 export default Explore
-
-const styles = {
-    itemImage: {
-        width: 197,
-        height: 172
-    },
-    maxContent: {
-        maxWidth: 'max-content'
-    }
-}

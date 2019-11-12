@@ -12,7 +12,7 @@ export default function StoryItem(props) {
 
     return (
         <div key={id} className="d-flex flex-column" style={styles.container}>
-            <Link to={`/story/${id}`}>
+            <Link to={`/stories/${id}/view`}>
                 <div className="d-flex story-item" style={styles.imageContainer}>
                     <img style={styles.image} alt="" src={imgUrl} />
                     <div className="overlay d-flex flex-column p-3" style={styles.overlay}>

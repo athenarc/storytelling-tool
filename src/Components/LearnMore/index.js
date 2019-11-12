@@ -1,12 +1,7 @@
-import React, { useState, Fragment } from 'react'
-import { Card, Button, Form } from 'react-bootstrap'
-import { Redirect, Link } from 'react-router-dom'
-import backgroundImage from '../../assets/background.jpg';
+import React, { Fragment } from 'react'
+import { Redirect } from 'react-router-dom'
 
 function LearnMore(props) {
-
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
 
     const learnMore = () => (
         <div style={styles.wrapper}>

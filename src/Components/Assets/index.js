@@ -1,25 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Row, Col, Form, Card } from 'react-bootstrap'
+import { Container, Row, Col, Card } from 'react-bootstrap'
 import { postData, addToast } from '../../utils'
 import { ENDPOINT } from '../../config'
 import { TOAST } from '../../resources'
 import Checkbox from '../lib/Checkbox'
 import Spinner from '../lib/Spinner'
-import _ from 'lodash'
 import SearchText from '../lib/SearchText'
 
-function DebouncedInput(props) {
-    const { onChange, value, delay = 300, ...rest } = props;
-
-
-    return (
-        <input
-            value={value}
-            {...rest}
-            onChange={_.debounce(onChange, delay)}
-        />
-    )
-}
 
 export default function Assets(props) {
 
@@ -29,15 +16,8 @@ export default function Assets(props) {
     const [assets, setAssets] = useState([])
     const [isLoading, setIsLoading] = useState(false)
 
-    useEffect(() => {
-        performSearch()
-    }, [query])
 
-    useEffect(() => {
-        performSearch()
-    }, [searchOnSketchfab, searchOnEuropeana])
-
-    const performSearch = () => {
+    const performSearch = React.useCallback((searchOnSketchfab, searchOnEuropeana) => {
         setIsLoading(true)
         postData(ENDPOINT.ASSETS.SEARCH, { query, searchOnSketchfab, searchOnEuropeana, }, true)
             .then(assets => {
@@ -45,7 +25,12 @@ export default function Assets(props) {
                 setIsLoading(false)
             })
             .catch(ex => addToast('Failed to load assets', TOAST.ERROR))
-    }
+    }, [query])
+
+    useEffect(() => {
+        performSearch(searchOnSketchfab, searchOnEuropeana)
+    }, [searchOnSketchfab, searchOnEuropeana, performSearch])
+
 
     const handleChange = input => () => {
         input === 'fab'
@@ -78,12 +63,6 @@ export default function Assets(props) {
                         <Col className="max-content mt-2"><h4 className="header-primary">My Assets</h4></Col>
                         <Col>
                             <SearchText onChange={(assyncQuery) => setQuery(assyncQuery)} />
-                            {/* <Form.Control
-                                value={query}
-                                onChange={handleInputChange}
-                                type="search"
-                                placeholder="search"
-                                className="text-right bg-secondary" /> */}
                         </Col>
                     </Row>
                 </Col>
@@ -111,9 +90,14 @@ const styles = {
         margin: 4,
         flex: 1,
         minWidth: 200,
-        cursor: 'pointer'
+        cursor: 'pointer',
+        backgroundColor: "#fff",
+        display: "flex",
+        alignItems: "center",
+        paddingTop: 8,
     },
     cardImage: {
-        height: 120
+        height: 120,
+        maxWidth: 200
     }
 }
