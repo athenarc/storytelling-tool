@@ -1,7 +1,6 @@
 import React, { Fragment, useState, useEffect } from 'react'
 import { STORY_TYPES } from '../../resources'
 import { Container, Button, Row, Col, Form } from 'react-bootstrap'
-import DatePicker from 'react-datepicker'
 import NavButtons from '../lib/NavButtons'
 import "react-datepicker/dist/react-datepicker.css";
 import Assets from '../Assets'
@@ -28,12 +27,21 @@ export default function StoryForm(props) {
     const [step, setStep] = useState(0)
     const [story, setStory] = useState({ ...StorySchema })
 
+    const getStoryCategory = React.useCallback((storyType) => {
+        switch (storyType) {
+            case STORY_TYPES.SLIDESHOW: return 1
+            case STORY_TYPES.HOTSPOTS: return 2
+            case STORY_TYPES.TIMELINE: return 3
+            default: return
+        }
+    }, [])
+
     useEffect(() => {
         setStory({
             ...StorySchema,
-            category: getStoryCategory()
+            category: getStoryCategory(storyType)
         })
-    }, [storyType])
+    }, [storyType, getStoryCategory])
 
 
     const handleUpdateProp = (prop) => (e) => {
@@ -119,14 +127,6 @@ export default function StoryForm(props) {
         }).catch(ex => console.log(ex))
     }
 
-    const getStoryCategory = () => {
-        switch (storyType) {
-            case STORY_TYPES.SLIDESHOW: return 1
-            case STORY_TYPES.HOTSPOTS: return 2
-            case STORY_TYPES.TIMELINE: return 3
-            default: return
-        }
-    }
     const getStoryTitle = () => {
         switch (storyType) {
             case STORY_TYPES.SLIDESHOW: return "Slideshow"
@@ -219,7 +219,7 @@ export default function StoryForm(props) {
         const asset = story.chapters[0].assets[0]
         const hasModel = asset && asset.embedUrl
         if (hasModel) {
-            preview = <iframe src={asset.embedUrl} id="api-frame" className="w-100" style={{ height: 480 }}></iframe>
+            preview = <iframe title="api-iframe" src={asset.embedUrl} id="api-frame" className="w-100" style={{ height: 480 }}></iframe>
         } else {
             preview = <img style={{ width: 100 + '%' }} alt="" src={asset.thumbnail} />
         }

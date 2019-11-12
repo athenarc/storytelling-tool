@@ -102,7 +102,7 @@ const Stories = (props) => {
 
         return <Row className="mt-2" key={story.id}>
             <Col style={styles.maxContent}>
-                <img src={storyImage} style={styles.itemImage} />
+                <img alt="" src={storyImage} style={styles.itemImage} />
             </Col>
             <Col style={{ display: 'flex', flexDirection: 'column' }}>
                 <h4 className="header-primary">{story.title}</h4>

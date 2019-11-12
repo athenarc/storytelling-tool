@@ -294,7 +294,7 @@ export default class StoryEditor extends Component {
             const asset = chapter.assets[0]
             const hasModel = asset.embedUrl
             if (hasModel) {
-                return <iframe src={asset.embedUrl} id="api-frame" className="w-100" style={{ height: 480 }}></iframe>
+                return <iframe title="api-iframe" src={asset.embedUrl} id="api-frame" className="w-100" style={{ height: 480 }}></iframe>
             } else {
                 return <img style={{ width: 100 + '%' }} alt="" src={asset.thumbnail} />
             }
@@ -303,12 +303,12 @@ export default class StoryEditor extends Component {
         const getSlides = (chapters) => {
             const items = chapters.map(ch => {
                 return <li key={ch.id} style={{ display: 'flex' }} className="m-2">
-                    <a className="body-primary p-2 mr-auto">{ch.title}</a>
+                    <button className="btn btn-link body-primary p-2 mr-auto">{ch.title}</button>
                     <Button onClick={() => this.handleNewChapter(ch.id)} className="btn btn-primary">Edit</Button>
                 </li>
             })
             items.push(<li key={-2} style={{ display: 'flex' }} className="m-2">
-                <a className="body-primary p-2 mr-auto"></a>
+                <button className="btn btn-link body-primary p-2 mr-auto"></button>
                 <Button disabled={story && story.chapters.find(x => x.id === -1)} onClick={() => this.handleNewChapter(null)} className="btn btn-secondary">Add Slide</Button>
             </li>)
             return items
@@ -371,6 +371,7 @@ export default class StoryEditor extends Component {
         }
 
         const title = story ? story.title : ""
+        const description = story ? story.description : ""
         return (
             <Fragment>
                 <Container className={`mt-5 ${showAssetPicker ? 'd-none' : ''}`} >
@@ -378,15 +379,27 @@ export default class StoryEditor extends Component {
                         <Col style={{ width: "max-content" }}>
                             {
                                 !this.state.showEditTitle &&
-                                <h4 className="header-primary">{title}</h4>}
+                                <>
+                                    <h4 className="header-primary">{title}</h4>
+                                    <p className="body-secondary">{description}</p>
+                                </>
+                            }
                             {
                                 this.state.showEditTitle &&
-                                <input
-                                    onKeyPress={this.handleTitleTyping}
-                                    className="form-control mb-2"
-                                    style={{ width: 400 }}
-                                    value={title}
-                                    onChange={this.handleUpdateProp("title")} />
+                                <>
+                                    <input
+                                        onKeyPress={this.handleTitleTyping}
+                                        className="form-control mb-2"
+                                        style={{ width: 400 }}
+                                        value={title}
+                                        onChange={this.handleUpdateProp("title")} />
+                                    <textarea
+                                        onKeyPress={this.handleTitleTyping}
+                                        className="form-control mb-2"
+                                        style={{ width: 400 }}
+                                        value={description}
+                                        onChange={this.handleUpdateProp("description")} />
+                                </>
                             }
                         </Col>
                     </Row>

@@ -4,6 +4,7 @@ import { fetchData } from '../../utils';
 import { ENDPOINT } from '../../config';
 import { Container, Row, Col, Spinner, Button } from 'react-bootstrap'
 import HorizontalTimeline from 'react-horizontal-timeline'
+import XMLModal from './XMLModal';
 
 const properties = {
     duration: 50000000,
@@ -23,14 +24,22 @@ export default class StoryView extends Component {
             api: null,
             story: null,
             chpaterIndex: 0,
+            xml: "",
+            showXmlModal: false
         }
         this.getStoryById = this.getStoryById.bind(this)
         this.handleChangeSlide = this.handleChangeSlide.bind(this)
+        this.handleXmlToggle = this.handleXmlToggle.bind(this)
     }
 
     handleChangeSlide(oldIndex, newIndex) {
         this.setState({ chpaterIndex: newIndex })
     }
+
+    handleXmlToggle(id) {
+        this.setState(prevState => ({ showXmlModal: !prevState.showXmlModal }))
+    }
+
 
     handle3dNavigation(direction) {
         if (this.state.story.chapters.length <= 1) return
@@ -166,7 +175,7 @@ export default class StoryView extends Component {
                             // </div>
                         } {
                             asset.embedUrl &&
-                            <iframe className="w-100" src={asset.embedUrl} style={{ height: 480 }}></iframe>
+                            <iframe title={asset.id} className="w-100" src={asset.embedUrl} style={{ height: 480 }}></iframe>
 
                         }
                     </div>
@@ -202,9 +211,11 @@ export default class StoryView extends Component {
                         <div className="d-flex flex-column" style={styles.overlay}>
                             <div className="font-weight-bold">{getValue('description')}</div>
                             <div className="mt-2">Published: {new Date(getValue('createdAt')).toDateString()}</div>
-                            <div className="font-italic"> Category: {getCategoryTitle(story.category)}</div>
+                            <div className="font-italic">Category: {getCategoryTitle(story.category)}</div>
+                            <div className="font-italic">
+                                Metadata: <Button onClick={() => this.handleXmlToggle(story.id)} className="btn btn-secondary f-12 btn-sm ml-2">Preview</Button>
+                            </div>
                         </div>
-
                         <div className="d-flex bg-white p-1  align-items-center">
                             <img className="mx-1" alt="" width="20" height="20" src={require('../../assets/ico-person.png')} />
                             <div className="mx-1 mr-auto f-12">{story.createdBy.name}</div>
@@ -245,7 +256,7 @@ export default class StoryView extends Component {
                         is3dModel
                             ? <div className="react-slideshow-container">
                                 <div onClick={() => this.handle3dNavigation('previous')} className="nav" data-type="prev"><span></span></div>
-                                <iframe id="api-frame" className="w-100" style={{ height: 480 }}></iframe>
+                                <iframe title={"api-iframe"} id="api-frame" className="w-100" style={{ height: 480 }}></iframe>
                                 <div onClick={() => this.handle3dNavigation('next')} className="nav" data-type="next"><span></span></div>
                             </div>
                             : <Slide onChange={this.handleChangeSlide} {...properties}>
@@ -313,6 +324,11 @@ export default class StoryView extends Component {
                     <h2 className="header-primary">{getValue('title')}</h2>
                 </Row>
                 {getPreview()}
+                <XMLModal
+                    story={story}
+                    open={this.state.showXmlModal}
+                    close={this.handleXmlToggle}
+                />
             </Container>
         )
     }

@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import './App.css';
 import Origin from './Components/Origin';
-import { log } from 'util';
+import { Spinner } from 'react-bootstrap';
 
 const md5 = require('md5');
 
@@ -60,12 +60,16 @@ export default function App(props) {
 
   return (<React.Fragment>
     <ToastContainer position={toast.POSITION.BOTTOM_RIGHT} />
-    <Origin
-      login={log}
-      register={register}
-      isAuth={isAuth}
-      isLoading={isLoading}
-    />
+    {
+      isLoading
+        ? <Spinner />
+        : <Origin
+          login={login}
+          register={register}
+          isAuth={isAuth}
+          isLoading={isLoading}
+        />
+    }
   </React.Fragment>
   )
 }

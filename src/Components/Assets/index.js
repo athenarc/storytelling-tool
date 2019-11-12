@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Row, Col, Form, Card } from 'react-bootstrap'
+import { Container, Row, Col, Card } from 'react-bootstrap'
 import { postData, addToast } from '../../utils'
 import { ENDPOINT } from '../../config'
 import { TOAST } from '../../resources'
 import Checkbox from '../lib/Checkbox'
 import Spinner from '../lib/Spinner'
-import _ from 'lodash'
 import SearchText from '../lib/SearchText'
 
 
@@ -17,15 +16,8 @@ export default function Assets(props) {
     const [assets, setAssets] = useState([])
     const [isLoading, setIsLoading] = useState(false)
 
-    useEffect(() => {
-        performSearch()
-    }, [query])
 
-    useEffect(() => {
-        performSearch()
-    }, [searchOnSketchfab, searchOnEuropeana])
-
-    const performSearch = () => {
+    const performSearch = React.useCallback((searchOnSketchfab, searchOnEuropeana) => {
         setIsLoading(true)
         postData(ENDPOINT.ASSETS.SEARCH, { query, searchOnSketchfab, searchOnEuropeana, }, true)
             .then(assets => {
@@ -33,7 +25,12 @@ export default function Assets(props) {
                 setIsLoading(false)
             })
             .catch(ex => addToast('Failed to load assets', TOAST.ERROR))
-    }
+    }, [query])
+
+    useEffect(() => {
+        performSearch(searchOnSketchfab, searchOnEuropeana)
+    }, [searchOnSketchfab, searchOnEuropeana, performSearch])
+
 
     const handleChange = input => () => {
         input === 'fab'
