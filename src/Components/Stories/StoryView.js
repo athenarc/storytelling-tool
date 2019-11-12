@@ -199,6 +199,10 @@ export default class StoryView extends Component {
             }
         }
 
+        const goBack = () => {
+            window.history.back();
+          }
+
         const getCommonView = () => {
 
             const chapter = story.chapters[this.state.chpaterIndex]
@@ -322,6 +326,7 @@ export default class StoryView extends Component {
             <Container className="d-flex flex-column" style={{ height: "calc(100vh - 80px)" }}>
                 <Row className="py-5">
                     <h2 className="header-primary">{getValue('title')}</h2>
+                    <div className="pull-right"><Button onClick={() => goBack()} className="btn btn-secondary btn-sm ml-2">Exit</Button></div>
                 </Row>
                 {getPreview()}
                 <XMLModal

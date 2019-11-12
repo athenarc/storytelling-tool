@@ -25,13 +25,13 @@ export default function ResetPassword({ show, handleClose }) {
             centered
             onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Modal heading</Modal.Title>
+                <Modal.Title>Password reset form</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <input
                     onKeyPress={handleChange}
                     className="form-control my-4"
-                    placeholder="Username"
+                    placeholder="Please add your email"
                     id="username"
                     value={username}
                     onChange={handleChange} />
