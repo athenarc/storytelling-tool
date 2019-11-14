@@ -234,7 +234,7 @@ export default class StoryView extends Component {
                             <div className="mx-1 body-secondary f-12">{getValue('starredCount')}</div>
                         </div>
 
-                        <div className="d-flex flex-column py-2" style={{ flex: 1, maxHeight: 400, overflow: 'auto' }}>
+                        <div className="d-flex flex-column py-2" style={{ flex: 1, maxHeight: 340, overflow: 'auto' }}>
                             <h5 className="header-primary">{chapter && chapter.title}</h5>
                             <div style={{ flex: 1 }} className="body-secondary f-14">
                                 {chapter && chapter.description}
@@ -326,9 +326,12 @@ export default class StoryView extends Component {
             <Container className="d-flex flex-column" style={{ height: "calc(100vh - 80px)" }}>
                 <Row className="py-5">
                     <h2 className="header-primary">{getValue('title')}</h2>
-                    <div className="pull-right"><Button onClick={() => goBack()} className="btn btn-secondary btn-sm ml-2">Exit</Button></div>
                 </Row>
                 {getPreview()}
+                
+                <div className="text-center"><Button onClick={() => goBack()} className="btn btn-secondary btn-md ml-2">Exit Preview</Button></div>
+                <br/><br/><br/>
+                
                 <XMLModal
                     story={story}
                     open={this.state.showXmlModal}
