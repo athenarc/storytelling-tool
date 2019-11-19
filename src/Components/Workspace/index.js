@@ -10,9 +10,9 @@ export default function Workspace(props) {
             <Row>
                 <Col md={3} style={styles.divider}>
                     <h4 className="header-primary">Create a story</h4>
-                    <p className="body-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p className="body-secondary">Discover 3D models in Europeana and Sketchfab and create exceptional stories! Nomatter your incentive, you can use the storytelling tool for fun, for professional work, for educational purposes, and for creativity!</p>
                     <h4 className="header-primary">Pick a template</h4>
-
+                    <p className="body-secondary">Select a template that fits best with your needs, objects, story to communicate and of course imagination! There are three available options to choose from; a story with an object’s hotspots, a story like a slideshow, and a story where time is critical.</p>
                 </Col>
 
                 <Col md={9}>

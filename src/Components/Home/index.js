@@ -8,24 +8,24 @@ function Home(props) {
     const homeCards = () => (
         <div style={styles.wrapper}>
             <div style={styles.container} className="mt-5">
-                <Card onClick={() => props.history.push('/explore')} style={{ zIndex: '10', backgroundColor: 'transparent', width: '20rem', height: '20rem', margin: '12px', border: '0' }}>
+                <Card onClick={() => props.history.push('/explore')} style={{ zIndex: '10', backgroundColor: 'transparent', width: '20rem', height: '24rem', margin: '12px', border: '0' }}>
                     <Link to={`/explore`} className="btn btn-primary btn-lg" style={{ align: 'center', width: '100%', lineHeight: '80px' }} > Explore stories</Link>
                     <Card.Body className="body-secondary" style={{ backgroundColor: '#F1F1F1', border: '0', height: '20rem' }}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    Discover stories of artifacts, places, buildings and more cultural objects available in Sketchfab and Europeana, shaped by culture professionals, educators, artists, individuals and created with Share3D story maker tool.
                 </Card.Body>
                 </Card>
 
-                <Card onClick={() => props.history.push('/workspace')} style={{ zIndex: '10', backgroundColor: 'transparent', width: '20rem', height: '20rem', margin: '12px', border: '0' }}>
+                <Card onClick={() => props.history.push('/workspace')} style={{ zIndex: '10', backgroundColor: 'transparent', width: '20rem', height: '24rem', margin: '12px', border: '0' }}>
                     <Link to={`/workspace`} className="btn btn-primary btn-lg" style={{ align: 'center', width: '100%', lineHeight: '80px' }} > Create a story</Link>
                     <Card.Body className="body-secondary" style={{ backgroundColor: '#F1F1F1', border: '0', height: '20rem' }}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    Combine 3D objects from you own cultural portfolio in Sketchfab with cultural assets from Europeana and build stories around them. Your stories can be then visible to others and may be a reference point for educators in classrooms, other professionals, tourism guides, and more!
                 </Card.Body>
                 </Card>
 
-                <Card onClick={() => props.history.push('/learnmore')} style={{ zIndex: '10', backgroundColor: 'transparent', width: '20rem', height: '20rem', margin: '12px', border: '0' }}>
+                <Card onClick={() => props.history.push('/learnmore')} style={{ zIndex: '10', backgroundColor: 'transparent', width: '20rem', height: '24rem', margin: '12px', border: '0' }}>
                     <Link to={`/learnmore`} className="btn btn-primary btn-lg" style={{ align: 'center', width: '100%', lineHeight: '80px' }} > Learn more</Link>
                     <Card.Body className="body-secondary" style={{ backgroundColor: '#F1F1F1', border: '0', height: '20rem' }}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    To learn more about how to join Share3D, you can read our FAQs and then create an account to start over. Don’t forget to read our tutorial! Also, if you want to share your content in Share3D,  it is advised to read our guidelines first.
                 </Card.Body>
                 </Card>
             </div >

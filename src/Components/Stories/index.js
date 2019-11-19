@@ -100,19 +100,23 @@ const Stories = (props) => {
         if (story.chapters && story.chapters.length > 0 && story.chapters[0].assets.length > 0)
             storyImage = story.chapters[0].assets[0].thumbnail
 
+        let categoryImage = <img alt="" alt="Slideshow" src={require('../../assets/story-2.png')} height={20} />
+        if(story.category==2) categoryImage = <img alt="" alt="Hotspots" src={require('../../assets/story-3.png')} height={20} />
+        if(story.category==3) categoryImage = <img alt="" alt="Timeline" src={require('../../assets/story-1.png')} height={20} />
+
         return <Row className="mt-2" key={story.id}>
             <Col style={styles.maxContent}>
                 <img alt="" src={storyImage} style={styles.itemImage} />
             </Col>
             <Col style={{ display: 'flex', flexDirection: 'column' }}>
-                <h4 className="header-primary">{story.title}</h4>
+                <h4 className="header-primary">{story.title} {story.category} {categoryImage}</h4>
                 <div className="body-secondary">{maxLetters(story.description, 250)}</div>
                 <Row className="mt-auto">
                     <Col style={styles.maxContent}><Button variant={story.isPublic ? 'success' : 'primary'}>{story.isPublic ? 'Published' : 'Private'}</Button></Col>
                     <Col style={styles.maxContent}><Button variant="secondary" onClick={() => props.history.push(`/stories/${story.id}/view`)}>View</Button></Col>
                     <Col style={styles.maxContent}><Button variant="secondary" onClick={() => props.history.push(`/stories/${story.id}/edit`)}>Edit</Button></Col>
                     <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmDelete(story.id)}>Delete</Button></Col>
-                    {!story.isPublic && <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmShare(story.id)}>Share</Button></Col>}
+                    {!story.isPublic && <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmShare(story.id)}>Publish</Button></Col>}
                     {story.isPublic && <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmUnShare(story.id)}>UnShare</Button></Col>}
                 </Row>
             </Col>

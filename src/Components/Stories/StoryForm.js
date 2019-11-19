@@ -13,7 +13,7 @@ const StorySchema = {
     description: "",
     category: null,
     chapters: [{
-        title: "Introdution",
+        title: "Introduction",
         description: "",
         assets: []
     }],
