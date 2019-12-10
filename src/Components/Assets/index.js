@@ -39,7 +39,7 @@ export default function Assets(props) {
     }
 
     const getAssets = () => {
-        if(query && assets && assets.length===0) {
+        if(!isLoading && query && assets && assets.length===0) {
             return <div style={styles.notFound}><br/><br/><br/>No results found, please try a new inquiry</div>
         }
         if(!query && assets && assets.length===0) {
