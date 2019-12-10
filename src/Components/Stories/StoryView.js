@@ -72,7 +72,14 @@ export default class StoryView extends Component {
     getStoryById(id) {
         fetchData(ENDPOINT.STORIES + `/${id}`)
             .then((data) => {
-                this.setState({ story: data })
+
+                const sorted = {
+                    ...data,
+                    chapters: [
+                        ...data.chapters.sort((a, b) => (a.startDate - b.startDate))
+                    ]
+                }
+                this.setState({ story: sorted })
                 return data
                 // if (!data.chapters[0]) props.history.push('/workspace')
             })
@@ -201,7 +208,7 @@ export default class StoryView extends Component {
 
         const goBack = () => {
             window.history.back();
-          }
+        }
 
         const getCommonView = () => {
 
@@ -328,10 +335,10 @@ export default class StoryView extends Component {
                     <h2 className="header-primary">{getValue('title')}</h2>
                 </Row>
                 {getPreview()}
-                
+
                 <div className="text-center"><Button onClick={() => goBack()} className="btn btn-secondary btn-md ml-2">Exit Preview</Button></div>
-                <br/><br/><br/>
-                
+                <br /><br /><br />
+
                 <XMLModal
                     story={story}
                     open={this.state.showXmlModal}

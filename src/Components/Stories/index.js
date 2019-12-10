@@ -100,9 +100,9 @@ const Stories = (props) => {
         if (story.chapters && story.chapters.length > 0 && story.chapters[0].assets.length > 0)
             storyImage = story.chapters[0].assets[0].thumbnail
 
-        let categoryImage = <img alt="" alt="Slideshow" src={require('../../assets/story-2.png')} height={20} />
-        if(story.category==2) categoryImage = <img alt="" alt="Hotspots" src={require('../../assets/story-3.png')} height={20} />
-        if(story.category==3) categoryImage = <img alt="" alt="Timeline" src={require('../../assets/story-1.png')} height={20} />
+        let categoryImage = <img alt="Slideshow" src={require('../../assets/story-2.png')} height={20} />
+        if (story.category === 2) categoryImage = <img alt="Hotspots" src={require('../../assets/story-3.png')} height={20} />
+        if (story.category === 3) categoryImage = <img alt="Timeline" src={require('../../assets/story-1.png')} height={20} />
 
         return <Row className="mt-2" key={story.id}>
             <Col style={styles.maxContent}>
