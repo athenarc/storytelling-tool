@@ -287,6 +287,15 @@ export default class StoryEditor extends Component {
         const { story, currentChapterId, showAssetPicker, showEdit } = this.state
         const currentChapter = story && story.chapters.find(x => x.id === currentChapterId)
 
+        const getSlideText = (category) => {
+            switch (category) {
+                case 1: return "Slide"
+                case 2: return "Hotspot"
+                case 3: return "Slide"
+                default: return "Slide"
+            }
+        }
+
         const getIntroPreview = () => {
             if (!story) return null
             if (!story.chapters[0]) return null
@@ -309,7 +318,7 @@ export default class StoryEditor extends Component {
             })
             items.push(<li key={-2} style={{ display: 'flex' }} className="m-2">
                 <button className="btn btn-link body-primary p-2 mr-auto"></button>
-                <Button disabled={story && story.chapters.find(x => x.id === -1)} onClick={() => this.handleNewChapter(null)} className="btn btn-secondary">Add Slide</Button>
+                <Button disabled={story && story.chapters.find(x => x.id === -1)} onClick={() => this.handleNewChapter(null)} className="btn btn-secondary">Add {getSlideText(story.category)}</Button>
             </li>)
             return items
         }
