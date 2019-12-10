@@ -238,7 +238,7 @@ export default class StoryView extends Component {
 
                         <div className="d-flex flex-column" style={styles.overlay}>
                             {chpaterIndex===0 && <>
-                                <div className="font-weight-bold">{getValue('description')}</div>
+                                <div className="font-weight-bold" style={{ maxHeight: 200, overflow: 'auto' }}>{getValue('description')}</div>
                             </> }
                             <div className="mt-2">Published: {new Date(getValue('createdAt')).toDateString()}</div>
                             <div className="font-italic">Category: {getCategoryTitle(story.category)}</div>
