@@ -66,7 +66,7 @@ export default function Assets(props) {
             <Row className="mt-5">
                 <Col md={6} className="ml-auto">
                     <Row>
-                        <Col className="max-content mt-2"><h4 className="header-primary">My Assets</h4></Col>
+                        <Col className="max-content mt-2"><h4 className="header-primary">Search Assets</h4></Col>
                         <Col>
                             <SearchText onChange={(assyncQuery) => setQuery(assyncQuery)} />
                         </Col>
