@@ -155,7 +155,7 @@ export default class StoryView extends Component {
     handleAnnotation = (api, chapter) => {
         let chapterDesc = chapter.description;
         if (chapter.assets && chapter.assets[0]) {
-            chapterDesc = chapter.description + "<br/><img alt='' src='" + chapter.assets[0].thumbnail + "' height='30' style={styles.embedImage} />"
+            chapterDesc = "<div style={styles.embedText}>" + chapter.description + "</div><br/><img alt='' src='" + chapter.assets[0].thumbnail + "' height='30' style={styles.embedImage} />"
         }
         api.getAnnotationList((err, annotations) => {
             annotations.forEach((an, index) => {
@@ -389,8 +389,11 @@ const styles = {
         fontSize: 14
     },
     embedImage: {
-        maxWidth: 30,
-        maxHeight: 30
+        maxWidth: 60,
+        maxHeight: 60
+    },
+    embedText: {
+        fontSize:24
     },
     image: { height: 180, width: 'auto', margin: 'auto' },
     imageContainer: { flex: 1, backgroundColor: '#fff', position: 'relative' },
