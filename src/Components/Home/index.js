@@ -199,6 +199,15 @@ function Home(props) {
             <StoryList
                 stories={stories}
                 title={isAuth ? "Interesting Stories" : "Join the Share3D Storytelling Experience"} />
+           
+            <br/>
+            <center>
+            <Button 
+                    style={{ borderRadius: 30}}
+                    onClick={() => props.history.push('/workspace')}
+                    variant="primary">Explore more stories</Button>
+           </center>
+        
         </>
 
     )
