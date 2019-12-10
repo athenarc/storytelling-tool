@@ -1,80 +1,207 @@
-import React, { Fragment } from 'react'
-import { Card } from 'react-bootstrap'
-import { Redirect, Link } from 'react-router-dom'
-import backgroundImage from '../../assets/background.jpg';
+import React, { useEffect, useState } from 'react'
+import { Card, Container, Row, Col, Button } from 'react-bootstrap'
+import { fetchData } from '../../utils';
+import { ENDPOINT } from '../../config';
+import StoryItem from '../Explore/StoryItem';
+import imagePlaceholder from '../../assets/image-placeholder.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+
+const LINKS = {
+    FAQ: "https://share3d.eu/support/faqs/",
+    GUIDELINES: "https://share3d.eu/support/",
+    TUTORIALS: "https://share3d.eu/support/",
+    WEBSITE: "https://share3d.eu/",
+    LEARNMORE: "https://share3d.eu/about/"
+}
+
+function NavigationMenu(props) {
+    return <Container fluid className="py-3">
+        <Row className="shadow mx-1" style={{ borderRadius: 10 }}>
+            <Col md={3} className="d-flex m-0 p-0">
+                <Card
+                    style={{ borderRadius: "10px 0 0 10px" }}
+                    className="flex-fill border-0">
+                    <Card.Body className="d-flex flex-column">
+                        <Card.Title className="f-24 font-weight-bold header-primary">Getting Started</Card.Title>
+                        <Card.Title className="f-18 font-weight-bold">Create your first story</Card.Title>
+                        <Card.Text className="body-secondary">
+                            Full of Ideas ? Select a story type, choose your assets, and start creating story
+                        </Card.Text>
+                        <Button
+                            className="mt-auto px-4 py-2"
+                            style={{ borderRadius: 30 }}
+                            onClick={() => props.history.push('/workspace')}
+                            variant="primary">Start Creating</Button>
+                    </Card.Body>
+                </Card>
+            </Col>
+            <Col md={3} className="d-flex m-0 p-0">
+                <Card
+                    style={{ borderRadius: 0 }}
+                    className="flex-fill border-0">
+                    <Card.Img className="h-100" variant="top" src={require('../../assets/story-placeholder.png')} />
+                </Card>
+            </Col>
+            <Col md={3} className="d-flex m-0 p-0">
+                <Card
+                    style={{ borderRadius: 0 }}
+                    className="flex-fill border-0 bg-accent color-white">
+                    <Card.Body className="d-flex flex-column">
+                        <Card.Title className="f-24 font-weight-bold">Usefull Links</Card.Title>
+                        <a href={LINKS.FAQ} className="btn btn-link color-white text-left py-2">FAQ's <FontAwesomeIcon className="ml-2" icon={faArrowRight} /></a>
+                        <a href={LINKS.GUIDELINES} className="btn btn-link color-white text-left py-2">Guidelines <FontAwesomeIcon className="ml-2" icon={faArrowRight} /></a>
+                        <a href={LINKS.TUTORIALS} className="btn btn-link color-white text-left py-2">Tutorials <FontAwesomeIcon className="ml-2" icon={faArrowRight} /></a>
+                    </Card.Body>
+                </Card>
+            </Col>
+            <Col md={3} className="d-flex m-0 p-0">
+                <Card
+                    style={{ borderRadius: "0px 10px 10px 0px" }}
+                    className="flex-fill border-0">
+                    <Card.Body className="d-flex flex-column">
+                        <Card.Title className="f-24 font-weight-bold color-accent">Learn More</Card.Title>
+                        <Row>
+                            <Col sm={3}>
+                                <img alt="" width={60} src={require('../../assets/logo.png')} />
+                            </Col>
+                            <Col sm={9}>
+                                <Card.Text className="body-secondary">
+                                    Interested to learn more about Share 3D? Visit our website.
+                                    </Card.Text>
+                            </Col>
+                        </Row>
+                        <a
+                            href={LINKS.WEBSITE}
+                            target="blank"
+                            className="btn btn-secondary mt-auto px-4 py-2"
+                            style={{ borderRadius: 30 }}>Go to website</a>
+                    </Card.Body>
+                </Card>
+            </Col>
+        </Row>
+    </Container>
+}
+
+function CardMenu(props) {
+    return <Container>
+        <Row>
+            <Col>
+                <h4 className="header-primary pt-5 pb-2 font-weight-bold text-center">Start you Share3D Experience!</h4>
+            </Col>
+        </Row>
+        <Row>
+            <Col md={4} className="d-flex">
+                <Card className="shadow flex-fill">
+                    <Card.Body className="d-flex flex-column align-items-center">
+                        <Card.Title className="f-24 font-weight-bold">Explore Stories</Card.Title>
+                        <Card.Text className="text-center body-secondary">
+                            Navigate through our users' stories and get inspired from our amazing content
+                            </Card.Text>
+                        <Button
+                            className="mt-auto px-4 py-2"
+                            style={{ borderRadius: 30 }}
+                            onClick={() => props.history.push('/explore')}
+                            variant="primary">Explore</Button>
+                    </Card.Body>
+                </Card>
+            </Col>
+            <Col md={4} className="d-flex">
+                <Card className="shadow flex-fill">
+                    <Card.Body className="d-flex flex-column align-items-center">
+                        <Card.Title className="f-24 font-weight-bold">Create a story</Card.Title>
+                        <Card.Text className="text-center body-secondary">
+                            Full of ideas ? <br /> We give you an easy way to create your own story
+                            </Card.Text>
+                        <Button
+                            className="mt-auto px-4 py-2"
+                            style={{ borderRadius: 30 }}
+                            onClick={() => props.history.push('/workspace')}
+                            variant="primary">Create</Button>
+                    </Card.Body>
+                </Card>
+            </Col>
+            <Col md={4} className="d-flex">
+                <Card className="shadow flex-fill">
+                    <Card.Body className="d-flex flex-column align-items-center">
+                        <Card.Title className="f-24 font-weight-bold">Learn More</Card.Title>
+                        <Card.Text className="text-center body-secondary">
+                            Navigate through our website and learn more about Share 3D
+                            </Card.Text>
+                        <Button
+                            className="mt-auto px-4 py-2"
+                            onClick={() => window.location.href= LINKS.LEARNMORE}
+                            style={{ borderRadius: 30 }}
+                            variant="primary">Learn More</Button>
+                    </Card.Body>
+                </Card>
+            </Col>
+        </Row>
+    </Container>
+}
+
+function StoryList({ title, stories }) {
+
+    return <Container>
+        <Row>
+            <Col>
+                <h4 className="header-primary pt-5 pb-2 font-weight-bold text-center">{title}</h4>
+            </Col>
+        </Row>
+        <Row>
+            <Col className="d-flex flex-wrap">
+                {
+                    stories
+                        .map(story => {
+                            let imgUrl = imagePlaceholder;
+                            if (story.chapters && story.chapters.length > 0 && story.chapters[0].assets.length > 0)
+                                imgUrl = story.chapters[0].assets[0].thumbnail
+                            return <StoryItem
+                                key={story.id}
+                                id={story.id}
+                                imgUrl={imgUrl}
+                                userName={story.createdBy.name}
+                                stars={story.starredCount}
+                                title={story.title}
+                                date={story.createdAt}
+                                comments={story.commentsCount}
+                                views={story.viewsCount}
+                                description={story.description}
+
+                            />
+                        })
+                }
+            </Col>
+        </Row>
+    </Container>
+}
+
 
 function Home(props) {
 
-    const homeCards = () => (
-        <div style={styles.wrapper}>
-            <div style={styles.container} className="mt-5">
-                <Card onClick={() => props.history.push('/explore')} style={{ zIndex: '10', backgroundColor: 'transparent', width: '20rem', height: '20rem', margin: '12px', border: '0' }}>
-                    <Link to={`/explore`} className="btn btn-primary btn-lg" style={{ align: 'center', width: '100%', lineHeight: '80px' }} > Explore stories</Link>
-                    <Card.Body className="body-secondary" style={{ backgroundColor: '#F1F1F1', border: '0', height: '20rem' }}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </Card.Body>
-                </Card>
+    const { isAuth } = props
+    const [stories, setStories] = useState([])
 
-                <Card onClick={() => props.history.push('/workspace')} style={{ zIndex: '10', backgroundColor: 'transparent', width: '20rem', height: '20rem', margin: '12px', border: '0' }}>
-                    <Link to={`/workspace`} className="btn btn-primary btn-lg" style={{ align: 'center', width: '100%', lineHeight: '80px' }} > Create a story</Link>
-                    <Card.Body className="body-secondary" style={{ backgroundColor: '#F1F1F1', border: '0', height: '20rem' }}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </Card.Body>
-                </Card>
+    useEffect(() => {
+        fetchData(ENDPOINT.STORIES_PUBLIC)
+            .then(data => setStories(data))
+            .catch(ex => console.log(ex))
+    }, [])
 
-                <Card onClick={() => props.history.push('/learnmore')} style={{ zIndex: '10', backgroundColor: 'transparent', width: '20rem', height: '20rem', margin: '12px', border: '0' }}>
-                    <Link to={`/learnmore`} className="btn btn-primary btn-lg" style={{ align: 'center', width: '100%', lineHeight: '80px' }} > Learn more</Link>
-                    <Card.Body className="body-secondary" style={{ backgroundColor: '#F1F1F1', border: '0', height: '20rem' }}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </Card.Body>
-                </Card>
-            </div >
-            <div style={styles.containerBottom}></div>
-        </div>
-    )
+
     return (
-        <Fragment>
+        <>
             {
-                !props.isLoading && props.isAuth
-                    ? <Redirect to='/' />
-                    : homeCards()
+                isAuth
+                    ? <NavigationMenu history={props.history} />
+                    : <CardMenu history={props.history} />
             }
-        </Fragment>
-    )
-}
+            <StoryList
+                stories={stories}
+                title={isAuth ? "Interesting Stories" : "Join the Share3D Storytelling Experience"} />
+        </>
 
-const styles = {
-    wrapper: {
-        width: 100 + '%',
-        height: '100vh',
-        position: 'absolute',
-        display: 'flex',
-        flexDirection: 'column'
-    },
-    container: {
-        top: 0,
-        left: 0,
-        right: 0,
-        display: 'flex',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#F1F1F1'
-    },
-    containerBottom: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#F1F1F1',
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundPosition: 'bottom',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat'
-    },
-    link: {
-        fontSize: 12,
-        padding: 0
-    }
+    )
 }
 
 export default Home

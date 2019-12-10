@@ -12,7 +12,7 @@ const logout = () => {
         .catch(() => addToast('Failed to logout', TOAST.ERROR))
 }
 
-export default function Header() {
+export default function Header({ isAuth }) {
 
     return (
         <Navbar variant="light" className="bg-white" style={styles.navbar} expand="lg">
@@ -20,14 +20,23 @@ export default function Header() {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ml-auto">
-                    <NavLink to="/" style={styles.navlink}>Home</NavLink>
-                    <NavLink to={`/workspace`} style={styles.navlink}>Workspace</NavLink>
-                    <NavLink to={`/assets`} style={styles.navlink}>My Assets</NavLink>
-                    <NavLink to={`/stories`} style={styles.navlink}>My Stories</NavLink>
-                    <img alt="" src={imagePerson} style={{ marginLeft: '15px', marginRight: '-25px', marginTop: '5px', height: '30px' }} />
-                    <SplitButton variant={'link'} title="" alignRight>
-                        <Dropdown.Item eventKey="1" onClick={logout}>Logout</Dropdown.Item>
-                    </SplitButton>
+                    {isAuth &&
+                        <>
+                            <NavLink to="/" style={styles.navlink}>Home</NavLink>
+                            <NavLink to={`/workspace`} style={styles.navlink}>Workspace</NavLink>
+                            <NavLink to={`/assets`} style={styles.navlink}>My Assets</NavLink>
+                            <NavLink to={`/stories`} style={styles.navlink}>My Stories</NavLink>
+                            <img alt="" src={imagePerson} style={{ marginLeft: '15px', marginRight: '-25px', marginTop: '5px', height: '30px' }} />
+                            <SplitButton variant={'link'} title="" alignRight>
+                                <Dropdown.Item eventKey="1" onClick={logout}>Logout</Dropdown.Item>
+                            </SplitButton>
+                        </>}
+                    {!isAuth &&
+                        <>
+                            <NavLink to={`/login`} style={styles.navlink}>Login</NavLink>
+                            <NavLink to={`/register`} style={styles.navlink}>Register</NavLink>
+                        </>
+                    }
                 </Nav>
             </Navbar.Collapse>
         </Navbar>

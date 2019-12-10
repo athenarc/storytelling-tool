@@ -9,6 +9,10 @@ body {
   background-color: #B89122 !important
 }
 
+.bg-accent {
+  background-color: hsl(248, 100%, 27%);
+}
+
 .max-content {
   max-width: max-content;
 }
@@ -18,12 +22,20 @@ body {
 .f-14 {font-size: 14px}
 .f-16 {font-size: 16px}
 .f-18 {font-size: 18px}
+.f-24{font-size: 24px}
+.f-32{font-size: 32px}
 
 .color-primary {
   color: #B89122 !important;
 }
 .color-secondary {
   color: #707070 !important;
+}
+.color-white {
+  color: white !important;
+}
+.color-accent {
+  color: hsl(248, 100%, 27%) !important;
 }
 
 .header-primary {

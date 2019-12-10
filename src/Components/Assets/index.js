@@ -39,6 +39,12 @@ export default function Assets(props) {
     }
 
     const getAssets = () => {
+        if(query && assets && assets.length===0) {
+            return <div style={styles.notFound}><br/><br/><br/>No results found, please try a new inquiry</div>
+        }
+        if(!query && assets && assets.length===0) {
+            return <div style={styles.notFound}><br/><br/><br/>Search to reveal 3D models</div>
+        }
         return assets.map((model, index) => {
             return <Card key={index} style={styles.cardItem} onClick={() => {
                 if (props.onAssetClick) props.onAssetClick(model)
@@ -69,8 +75,9 @@ export default function Assets(props) {
             </Row>
             <Row>
                 <Col className="max-content"><h6 className="d-inline header-primary mr-4 mt-1">FILTER</h6></Col>
-                <Col className="max-content"><Checkbox label="Sketch FAB" checked={searchOnSketchfab} onChange={handleChange('fab')} /></Col>
+                <Col className="max-content"><Checkbox label="Sketchfab" checked={searchOnSketchfab} onChange={handleChange('fab')} /></Col>
                 <Col className="max-content"><Checkbox label="Europeana" checked={searchOnEuropeana} onChange={handleChange('europeana')} /></Col>
+                <Col md={5} className="max-content"><sub className="d-inline header-primary mr-4 mt-1">* all assets are open licensed</sub></Col>
             </Row>
             <div style={styles.cardContainer}>
                 {isLoading && <Spinner size={50} classes={"my-4"} />}
@@ -99,5 +106,11 @@ const styles = {
     cardImage: {
         height: 120,
         maxWidth: 200
-    }
+    },
+    notFound: {
+        margin: 4,
+        width: '100%',
+        textAlign: "center",
+        paddingTop: 8
+    },
 }
