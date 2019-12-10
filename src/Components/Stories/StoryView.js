@@ -6,6 +6,23 @@ import { Container, Row, Col, Spinner, Button } from 'react-bootstrap'
 import HorizontalTimeline from 'react-horizontal-timeline'
 import XMLModal from './XMLModal';
 
+import {
+    FacebookShareButton,
+    LinkedinShareButton,
+    TwitterShareButton,
+    EmailShareButton,
+  } from 'react-share';
+
+
+  import {
+    FacebookIcon,
+    TwitterIcon,
+    LinkedinIcon,
+
+    EmailIcon,
+  } from 'react-share';
+
+
 const properties = {
     duration: 50000000,
     transitionDuration: 500,
@@ -336,8 +353,19 @@ export default class StoryView extends Component {
                 </Row>
                 {getPreview()}
 
-                <div className="text-center"><Button onClick={() => goBack()} className="btn btn-secondary btn-md ml-2">Exit Preview</Button></div>
-                <br /><br /><br />
+                <div className="text-center">
+                    <Button onClick={() => goBack()} className="btn btn-secondary btn-md ml-2">Exit Preview</Button>
+                </div>
+                <br/>
+                <Row>
+                    <Col sm={4} md={4}></Col>
+                    <Col><FacebookShareButton url={window.location.href} ><FacebookIcon size={32} round={true} /></FacebookShareButton></Col>
+                    <Col><LinkedinShareButton url={window.location.href} ><LinkedinIcon size={32} round={true} /></LinkedinShareButton></Col>
+                    <Col><TwitterShareButton url={window.location.href} ><TwitterIcon size={32} round={true} /></TwitterShareButton></Col>
+                    <Col><EmailShareButton url={window.location.href} ><EmailIcon size={32} round={true} /></EmailShareButton></Col>
+                    <Col sm={4} md={4}></Col>
+                </Row>
+                 <br /><br /><br />
 
                 <XMLModal
                     story={story}

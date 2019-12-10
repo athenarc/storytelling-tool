@@ -403,12 +403,21 @@ export default class StoryEditor extends Component {
                             }
                         </Col>
                     </Row>
+                    { this.state.showEditTitle && <>
+                    <Row>
+                        <Col>
+                            <Button className="btn btn-primary" onClick={() => this.handleUpdateStory()}>Save</Button>
+                        </Col>
+                    </Row>
+                    </>  } 
+                    { !this.state.showEditTitle && <>
                     <Row>
                         <Col>
                             <Button className="btn btn-primary" onClick={() => this.setState({ showEditTitle: true })} disabled={this.state.showEditTitle}>Edit</Button>
                             <Button className="btn btn-secondary ml-2" onClick={() => this.props.history.push(`/stories/${story.id}/view`)}>Preview</Button>
                         </Col>
                     </Row>
+                    </> }
                     <Row>
                         <Col md={6} className="p-3">
                             {getIntroPreview()}
