@@ -1,7 +1,6 @@
 import React, { useState, Fragment } from 'react'
 import { Card, Button, Form, Container, Row, Col } from 'react-bootstrap'
 import { Redirect } from 'react-router-dom'
-import backgroundImage from '../../assets/background.jpg';
 import share3dLogo from '../../assets/Share3D_Logo_Icon_White.png';
 import ResetPassword from './ResetPassword';
 
@@ -13,7 +12,7 @@ function Login(props) {
 
     const loginForm = () => (
         <div style={styles.container}>
-            <img align="center" src={share3dLogo} style={{position:'absolute', top: 20}} />
+            <img alt="" align="center" src={share3dLogo} style={{ position: 'absolute', top: 20 }} />
             <Card style={{ width: '25rem', position: 'absolute', top: 100 }}>
                 <Card.Body>
                     <Card.Title className="text-center">Welcome back</Card.Title>
@@ -73,7 +72,7 @@ const styles = {
         justifyContent: 'center',
 
         backgroundImage: "linear-gradient(to right, #b89122, #000000)"
-        
+
         /*backgroundImage: `url(${backgroundImage})`,
         backgroundPosition: 'center',
         backgroundSize: 'cover',

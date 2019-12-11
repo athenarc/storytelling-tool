@@ -32,7 +32,7 @@ export default function Origin(props) {
                     <PrivateRoute permissions={[isAuth]} isLoading={isLoading} exact path="/workspace" component={Workspace} />
                     <PrivateRoute permissions={[isAuth]} isLoading={isLoading} path="/workspace/:type" component={StoryForm} />
                     <PrivateRoute permissions={[isAuth]} isLoading={isLoading} path="/assets" component={Assets} />
-                    <PrivateRoute permissions={[isAuth]} isLoading={isLoading} path="/explore" component={Explore} />
+                    <Route path="/explore" component={Explore} />
                     <PrivateRoute permissions={[isAuth]} isLoading={isLoading} path="/learnmore" component={LearnMore} />
                     <PrivateRoute permissions={[isAuth]} isLoading={isLoading} exact path="/stories" component={Stories} />
                     <Route permissions={[isAuth]} isLoading={isLoading} path="/stories/:id/view" component={StoryView} />

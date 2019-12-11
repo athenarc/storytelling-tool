@@ -96,7 +96,7 @@ function CardMenu(props) {
                     <Card.Body className="d-flex flex-column align-items-center">
                         <Card.Title className="f-24 font-weight-bold">Explore Stories</Card.Title>
                         <Card.Text className="text-center body-secondary">
-                        Discover stories created by culture professionals, educators, artists, individuals and published using the Share3D story maker tool.
+                            Discover stories created by culture professionals, educators, artists, individuals and published using the Share3D story maker tool.
                             </Card.Text>
                         <Button
                             className="mt-auto px-4 py-2"
@@ -111,7 +111,7 @@ function CardMenu(props) {
                     <Card.Body className="d-flex flex-column align-items-center">
                         <Card.Title className="f-24 font-weight-bold">Create a story</Card.Title>
                         <Card.Text className="text-center body-secondary">
-                        Create a story incorporating 3D objects from your portfolio in Sketchfab and assets from Europeana. Three templates are available to help you to your create stories for educators in classrooms, other professionals, tourism guides, and more! Once completed your stories can be published and made visible to others.
+                            Create a story incorporating 3D objects from your portfolio in Sketchfab and assets from Europeana. Three templates are available to help you to your create stories for educators in classrooms, other professionals, tourism guides, and more! Once completed your stories can be published and made visible to others.
                             </Card.Text>
                         <Button
                             className="mt-auto px-4 py-2"
@@ -126,11 +126,11 @@ function CardMenu(props) {
                     <Card.Body className="d-flex flex-column align-items-center">
                         <Card.Title className="f-24 font-weight-bold">Learn More</Card.Title>
                         <Card.Text className="text-center body-secondary">
-                        Learn more about Share3D, the storymaker and other services, read our <a href="https://share3d.eu/about/" target="_blank">FAQs</a> and user guidelines.
+                            Learn more about Share3D, the storymaker and other services, read our <a href="https://share3d.eu/about/" target="blank">FAQs</a> and user guidelines.
                             </Card.Text>
                         <Button
                             className="mt-auto px-4 py-2"
-                            onClick={() => window.location.href= LINKS.LEARNMORE}
+                            onClick={() => window.location.href = LINKS.LEARNMORE}
                             style={{ borderRadius: 30 }}
                             variant="primary">Learn More</Button>
                     </Card.Body>
@@ -199,15 +199,15 @@ function Home(props) {
             <StoryList
                 stories={stories}
                 title={isAuth ? "Interesting Stories" : "Join the Share3D Storytelling Experience"} />
-           
-            <br/>
+
+            <br />
             <center>
-            <Button 
-                    style={{ borderRadius: 30}}
-                    onClick={() => props.history.push('/workspace')}
+                <Button
+                    style={{ borderRadius: 30 }}
+                    onClick={() => props.history.push('/explore')}
                     variant="primary">Explore more stories</Button>
-           </center>
-            <br/>
+            </center>
+            <br />
         </>
 
     )
