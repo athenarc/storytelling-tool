@@ -10,6 +10,7 @@ export const ENDPOINT = {
     STORIES_PUBLIC: BASE_URL + '/stories/public',
     ASSETS: {
         SEARCH: BASE_URL + '/assets/search'
-    }
+    },
+    USERS: BASE_URL + '/users'
 
 }
