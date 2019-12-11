@@ -207,7 +207,7 @@ function Home(props) {
                     onClick={() => props.history.push('/workspace')}
                     variant="primary">Explore more stories</Button>
            </center>
-        
+            <br/>
         </>
 
     )
