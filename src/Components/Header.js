@@ -12,6 +12,16 @@ const logout = () => {
         .catch(() => addToast('Failed to logout', TOAST.ERROR))
 }
 
+const userProfile = () => {
+    /*postData(ENDPOINT.AUTH.LOGOUT, [], false, false)
+        .then(() => window.location.reload())
+        .catch(() => addToast('Failed to logout', TOAST.ERROR))*/
+}
+
+const userPassword = () => {
+    ;
+}
+
 export default function Header({ isAuth }) {
 
     return (
@@ -23,11 +33,13 @@ export default function Header({ isAuth }) {
                     {isAuth &&
                         <>
                             <NavLink to="/" style={styles.navlink}>Home</NavLink>
-                            <NavLink to={`/workspace`} style={styles.navlink}>Workspace</NavLink>
-                            <NavLink to={`/assets`} style={styles.navlink}>My Assets</NavLink>
+                            <NavLink to={`/workspace`} style={styles.navlink}>Create a story</NavLink>
+                            <NavLink to={`/assets`} style={styles.navlink}>Search Assets</NavLink>
                             <NavLink to={`/stories`} style={styles.navlink}>My Stories</NavLink>
                             <img alt="" src={imagePerson} style={{ marginLeft: '15px', marginRight: '-25px', marginTop: '5px', height: '30px' }} />
                             <SplitButton variant={'link'} title="" alignRight>
+                                <Dropdown.Item eventKey="3" onClick={userProfile}>Profile</Dropdown.Item>
+                                <Dropdown.Item eventKey="2" onClick={userPassword}>Change Password</Dropdown.Item>
                                 <Dropdown.Item eventKey="1" onClick={logout}>Logout</Dropdown.Item>
                             </SplitButton>
                         </>}

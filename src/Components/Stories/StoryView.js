@@ -6,6 +6,23 @@ import { Container, Row, Col, Spinner, Button } from 'react-bootstrap'
 import HorizontalTimeline from 'react-horizontal-timeline'
 import XMLModal from './XMLModal';
 
+import {
+    FacebookShareButton,
+    LinkedinShareButton,
+    TwitterShareButton,
+    EmailShareButton,
+  } from 'react-share';
+
+
+  import {
+    FacebookIcon,
+    TwitterIcon,
+    LinkedinIcon,
+
+    EmailIcon,
+  } from 'react-share';
+
+
 const properties = {
     duration: 50000000,
     transitionDuration: 500,
@@ -138,7 +155,7 @@ export default class StoryView extends Component {
     handleAnnotation = (api, chapter) => {
         let chapterDesc = chapter.description;
         if (chapter.assets && chapter.assets[0]) {
-            chapterDesc = chapter.description + "<br/><img alt='' src='" + chapter.assets[0].thumbnail + "' height='30' style={styles.embedImage} />"
+            chapterDesc = "<div style={styles.embedText}>" + chapter.description + "</div><br/><img alt='' src='" + chapter.assets[0].thumbnail + "' height='30' style={styles.embedImage} />"
         }
         api.getAnnotationList((err, annotations) => {
             annotations.forEach((an, index) => {
@@ -220,7 +237,9 @@ export default class StoryView extends Component {
                     <div className="d-flex flex-column" style={{ height: 100 + '%' }}>
 
                         <div className="d-flex flex-column" style={styles.overlay}>
-                            <div className="font-weight-bold">{getValue('description')}</div>
+                            {chpaterIndex===0 && <>
+                                <div className="font-weight-bold" style={{ maxHeight: 200, overflow: 'auto' }}>{getValue('description')}</div>
+                            </> }
                             <div className="mt-2">Published: {new Date(getValue('createdAt')).toDateString()}</div>
                             <div className="font-italic">Category: {getCategoryTitle(story.category)}</div>
                             <div className="font-italic">
@@ -336,8 +355,19 @@ export default class StoryView extends Component {
                 </Row>
                 {getPreview()}
 
-                <div className="text-center"><Button onClick={() => goBack()} className="btn btn-secondary btn-md ml-2">Exit Preview</Button></div>
-                <br /><br /><br />
+                <div className="text-center">
+                    <Button onClick={() => goBack()} className="btn btn-secondary btn-md ml-2">Exit Preview</Button>
+                </div>
+                <br/>
+                <Row>
+                    <Col sm={4} md={4}></Col>
+                    <Col><FacebookShareButton url={window.location.href} ><FacebookIcon size={32} round={true} /></FacebookShareButton></Col>
+                    <Col><LinkedinShareButton url={window.location.href} ><LinkedinIcon size={32} round={true} /></LinkedinShareButton></Col>
+                    <Col><TwitterShareButton url={window.location.href} ><TwitterIcon size={32} round={true} /></TwitterShareButton></Col>
+                    <Col><EmailShareButton url={window.location.href} ><EmailIcon size={32} round={true} /></EmailShareButton></Col>
+                    <Col sm={4} md={4}></Col>
+                </Row>
+                 <br /><br /><br />
 
                 <XMLModal
                     story={story}
@@ -359,8 +389,11 @@ const styles = {
         fontSize: 14
     },
     embedImage: {
-        maxWidth: 30,
-        maxHeight: 30
+        maxWidth: 60,
+        maxHeight: 60
+    },
+    embedText: {
+        fontSize:24
     },
     image: { height: 180, width: 'auto', margin: 'auto' },
     imageContainer: { flex: 1, backgroundColor: '#fff', position: 'relative' },

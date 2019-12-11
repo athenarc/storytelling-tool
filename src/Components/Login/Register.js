@@ -1,7 +1,8 @@
 import React, { useState, Fragment } from 'react'
-import { Card, Button, Form } from 'react-bootstrap'
+import { Card, Button, Form , Row} from 'react-bootstrap'
 import { Redirect } from 'react-router-dom'
 import backgroundImage from '../../assets/background.jpg';
+import share3dLogo from '../../assets/Share3D_Logo_Icon_White.png';
 
 const FormSchema = {
     username: "",
@@ -20,7 +21,8 @@ function Register(props) {
 
     const registerForm = () => (
         <div style={styles.container}>
-            <Card style={{ width: '25rem' }}>
+            <img align="center" src={share3dLogo} style={{position:'absolute', top: 20}} />
+            <Card style={{ width: '25rem', position: 'absolute', top: 100}}>
                 <Card.Body>
                     <Card.Title className="text-center">Register to </Card.Title>
                     <Form.Group>
@@ -76,9 +78,16 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'center',
 
-        backgroundImage: `url(${backgroundImage})`,
+        backgroundImage: "linear-gradient(to right, #b89122, #000000)"
+        /*backgroundImage: `url(${backgroundImage})`,
         backgroundPosition: 'center',
         backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'*/
+    },
+    logo: {
+        backgroundImage: `url(${share3dLogo})`,
+        backgroundPosition: 'center',
+        backgroundSize: 'contain',
         backgroundRepeat: 'no-repeat'
     },
     link: {

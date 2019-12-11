@@ -145,6 +145,15 @@ export default function StoryForm(props) {
         }
     }
 
+    const getStoryText = () => {
+        switch (storyType) {
+            case STORY_TYPES.SLIDESHOW: return "Slideshow - Choose a series of digital assets from Europeana and Sketchfab and add text to tell your story in the form of a slideshow." 
+            case STORY_TYPES.HOTSPOTS: return "Object + hotspots - Choose a hero object and add hotspots that you can use to tell your story using text and images or other digital media from Europeana and Sketchfab"
+            case STORY_TYPES.TIMELINE: return "Timeline -  Choose a series of digital assets from Europeana and Sketchfab that relate to moments in time that are relevant for your story."
+            default: return
+        }
+    }
+
     const stepOne = () => {
         return <Container className="mt-5">
             <Row>
@@ -153,7 +162,7 @@ export default function StoryForm(props) {
                     <Row>
                         <Col lg={7}>
                             <Button className="primary">{getStoryTitle()}</Button>
-                            <p className="body-secondary mt-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.</p>
+                                <p className="body-secondary mt-2">{getStoryText()}</p>
                         </Col>
                         <Col lg={5}>{getStoryImage()}</Col>
                     </Row>
