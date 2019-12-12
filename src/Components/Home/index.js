@@ -48,7 +48,7 @@ function NavigationMenu(props) {
                     style={{ borderRadius: 0 }}
                     className="flex-fill border-0 bg-accent color-white">
                     <Card.Body className="d-flex flex-column">
-                        <Card.Title className="f-24 font-weight-bold">Usefull Links</Card.Title>
+                        <Card.Title className="f-24 font-weight-bold">Useful Links</Card.Title>
                         <a href={LINKS.FAQ} className="btn btn-link color-white text-left py-2">FAQ's <FontAwesomeIcon className="ml-2" icon={faArrowRight} /></a>
                         <a href={LINKS.GUIDELINES} className="btn btn-link color-white text-left py-2">Guidelines <FontAwesomeIcon className="ml-2" icon={faArrowRight} /></a>
                         <a href={LINKS.TUTORIALS} className="btn btn-link color-white text-left py-2">Tutorials <FontAwesomeIcon className="ml-2" icon={faArrowRight} /></a>
