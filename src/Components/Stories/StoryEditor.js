@@ -132,7 +132,7 @@ export default class StoryEditor extends Component {
             const payload = {
                 title: currentChapter.title,
                 description: currentChapter.description,
-                position: this.wrapPosition(),
+                position: currentChapter.position,
                 startDate: currentChapter.startDate,
                 endDate: currentChapter.endDate
             }
@@ -153,7 +153,7 @@ export default class StoryEditor extends Component {
             const payload = {
                 title: currentChapter.title,
                 description: currentChapter.description,
-                position: this.wrapPosition(),
+                position: currentChapter.position,
                 startDate: currentChapter.startDate,
                 endDate: currentChapter.endDate
             }
@@ -233,9 +233,41 @@ export default class StoryEditor extends Component {
                         'click',
                         (info) => {
                             // this.handleObjectClick(api, info)
-                            if (info.position3D && this.state.currentChapterId) {
+                            const chapterIndex = this.state.story.chapters.findIndex(x => x.id === this.state.currentChapterId)
+                            const currentChapter = this.state.story.chapters[chapterIndex]
+
+                            if (info.position3D && currentChapter) {
+
+                                const position = info.position3D
+                                // Annotation is already set, need to update
+                                if (currentChapter.position) {
+                                    api.removeAnnotation(chapterIndex - 1) // First chapter is the intro
+                                }
+                                api.getCameraLookAt((err, camera) => {
+                                    if (position)
+                                        api.createAnnotation(
+                                            position,
+                                            [0, 0, 0],
+                                            [position[0] * 3, position[1] * 3, position[2] * 2],
+                                            camera.target,
+                                            currentChapter.title,
+                                            currentChapter.description
+                                        );
+                                })
+                                currentChapter.position = JSON.stringify([info.position3D[0], info.position3D[1], info.position3D[2]])
                                 // this.handleAnnotation(api, info)
-                                this.setState({ currentPosition: info.position3D })
+                                this.setState(prevState => ({
+                                    currentPosition: info.position3D,
+                                    story: {
+                                        ...prevState.story,
+                                        chapters: prevState.story.chapters.map(chapter => {
+                                            if (chapter.id === this.state.currentChapterId) {
+                                                return currentChapter
+                                            }
+                                            return chapter
+                                        })
+                                    }
+                                }))
                             }
                         },
                         { pick: 'slow' }
@@ -343,6 +375,7 @@ export default class StoryEditor extends Component {
                         chapters: this.state.story.chapters.filter(x => x.id !== -1)
                     }
                 })
+                this.getStoryById(this.state.story.id)
             } else {
                 deleteData(ENDPOINT.STORIES + `/${this.state.story.id}/chapters/${chapter.id}`)
                     .then(() => {
@@ -381,6 +414,8 @@ export default class StoryEditor extends Component {
 
         const title = story ? story.title : ""
         const description = story ? story.description : ""
+
+
         return (
             <Fragment>
                 <Container className={`mt-5 ${showAssetPicker ? 'd-none' : ''}`} >
@@ -412,21 +447,21 @@ export default class StoryEditor extends Component {
                             }
                         </Col>
                     </Row>
-                    { this.state.showEditTitle && <>
-                    <Row>
-                        <Col>
-                            <Button className="btn btn-primary" onClick={() => this.handleUpdateStory()}>Save</Button>
-                        </Col>
-                    </Row>
-                    </>  } 
-                    { !this.state.showEditTitle && <>
-                    <Row>
-                        <Col>
-                            <Button className="btn btn-primary" onClick={() => this.setState({ showEditTitle: true })} disabled={this.state.showEditTitle}>Edit</Button>
-                            <Button className="btn btn-secondary ml-2" onClick={() => this.props.history.push(`/stories/${story.id}/view`)}>Preview</Button>
-                        </Col>
-                    </Row>
-                    </> }
+                    {this.state.showEditTitle && <>
+                        <Row>
+                            <Col>
+                                <Button className="btn btn-primary" onClick={() => this.handleUpdateStory()}>Save</Button>
+                            </Col>
+                        </Row>
+                    </>}
+                    {!this.state.showEditTitle && <>
+                        <Row>
+                            <Col>
+                                <Button className="btn btn-primary" onClick={() => this.setState({ showEditTitle: true })} disabled={this.state.showEditTitle}>Edit</Button>
+                                <Button className="btn btn-secondary ml-2" onClick={() => this.props.history.push(`/stories/${story.id}/view`)}>Preview</Button>
+                            </Col>
+                        </Row>
+                    </>}
                     <Row>
                         <Col md={6} className="p-3">
                             {getIntroPreview()}
