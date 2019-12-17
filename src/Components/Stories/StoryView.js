@@ -11,16 +11,16 @@ import {
     LinkedinShareButton,
     TwitterShareButton,
     EmailShareButton,
-  } from 'react-share';
+} from 'react-share';
 
 
-  import {
+import {
     FacebookIcon,
     TwitterIcon,
     LinkedinIcon,
 
     EmailIcon,
-  } from 'react-share';
+} from 'react-share';
 
 
 const properties = {
@@ -237,9 +237,9 @@ export default class StoryView extends Component {
                     <div className="d-flex flex-column" style={{ height: 100 + '%' }}>
 
                         <div className="d-flex flex-column" style={styles.overlay}>
-                            {chpaterIndex===0 && <>
+                            {chpaterIndex === 0 && <>
                                 <div className="font-weight-bold" style={{ maxHeight: 200, overflow: 'auto' }}>{getValue('description')}</div>
-                            </> }
+                            </>}
                             <div className="mt-2">Published: {new Date(getValue('createdAt')).toDateString()}</div>
                             <div className="font-italic">Category: {getCategoryTitle(story.category)}</div>
                             <div className="font-italic">
@@ -321,7 +321,10 @@ export default class StoryView extends Component {
                             </div>
                         </div>
                         <div className="d-flex">
-                            <img alt="" src={asset && asset.thumbnail} style={{ width: 700, maxHeight: 400 }} />
+                            {asset && asset.embedUrl &&
+                                <iframe title={asset.id} src={asset.embedUrl} style={{ width: 700, maxHeight: 400, height: 400 }}></iframe>}
+                            {asset && asset.thumbnail && !asset.embedUrl &&
+                                <img alt="" src={asset.thumbnail} style={{ width: 700, maxHeight: 400 }} />}
                         </div>
                         {/* any arbitrary component can go here */}
                     </div>
@@ -358,7 +361,7 @@ export default class StoryView extends Component {
                 <div className="text-center">
                     <Button onClick={() => goBack()} className="btn btn-secondary btn-md ml-2">Exit Preview</Button>
                 </div>
-                <br/>
+                <br />
                 <Row>
                     <Col sm={4} md={4}></Col>
                     <Col><FacebookShareButton url={window.location.href} ><FacebookIcon size={32} round={true} /></FacebookShareButton></Col>
@@ -367,7 +370,7 @@ export default class StoryView extends Component {
                     <Col><EmailShareButton url={window.location.href} ><EmailIcon size={32} round={true} /></EmailShareButton></Col>
                     <Col sm={4} md={4}></Col>
                 </Row>
-                 <br /><br /><br />
+                <br /><br /><br />
 
                 <XMLModal
                     story={story}
@@ -393,7 +396,7 @@ const styles = {
         maxHeight: 60
     },
     embedText: {
-        fontSize:24
+        fontSize: 24
     },
     image: { height: 180, width: 'auto', margin: 'auto' },
     imageContainer: { flex: 1, backgroundColor: '#fff', position: 'relative' },
