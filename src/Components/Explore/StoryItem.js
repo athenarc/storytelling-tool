@@ -3,13 +3,24 @@ import { Link } from 'react-router-dom'
 import { Card } from 'react-bootstrap';
 
 export default function StoryItem(props) {
-    const { imgUrl, userName, views, comments, stars, description, date, title, id } = props
+    const { imgUrl, userName, views, comments, stars, description, date, title, id, category } = props
 
     let _desc = ""
     if (description.length > 70)
         _desc = description.substring(0, 70) + '..';
     else
         _desc = description
+
+
+    const getCategoryType = (category) => {
+        switch (category) {
+            case 1: return "Slideshow"
+            case 2: return "Hotspot"
+            case 3: return "Timeline"
+            default: return "-"
+        }
+    }
+
 
     return (
         <Card className="m-1 shadow-sm" style={styles.container}>
@@ -34,6 +45,7 @@ export default function StoryItem(props) {
                         <img width="20" height="20" alt="" src={require('../../assets/ico-person.png')} />
                         <div className="mr-auto f-12 body-secondary">{userName}</div>
 
+                        <div className="f-12 body-secondary">{getCategoryType(category)}</div>
                         {/*
                         <img width="20" height="20" alt="" src={require('../../assets/ico-person.png')} />
                         <div className="f-12 body-secondary">{comments}</div>

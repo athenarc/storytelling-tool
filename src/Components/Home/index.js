@@ -167,7 +167,7 @@ function StoryList({ title, stories }) {
                                 comments={story.commentsCount}
                                 views={story.viewsCount}
                                 description={story.description}
-
+                                category={story.category}
                             />
                         })
                 }
