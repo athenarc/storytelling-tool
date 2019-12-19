@@ -6,6 +6,7 @@ import { ENDPOINT } from '../config'
 import { TOAST } from '../resources'
 import { fetchData, updateData, postData, addToast, getUser } from '../utils'
 
+const md5 = require('md5');
 
 
 export default function Header({ isAuth }) {
@@ -19,9 +20,19 @@ export default function Header({ isAuth }) {
         email: ""
     }
     
+    const PasswordSchema = {
+        password: ""
+    }
+    const PasswordSchema2 = {
+        password: ""
+    }
+
     const [showModalProfile, setShowModalProfile] = useState(false)
     const [userDetails, setUserDetails] = useState(UserDetailsSchema)
-    
+    const [userPassword, setUserPassword] = useState(PasswordSchema)
+    const [userPassword2, setUserPassword2] = useState(PasswordSchema2)
+    const [showModalPassword, setShowModalPassword] = useState(false)
+
 
     const logout = () => {
         postData(ENDPOINT.AUTH.LOGOUT, [], false, false)
@@ -41,8 +52,7 @@ export default function Header({ isAuth }) {
             })
             .catch((ex) => {
                 addToast('Failed to fetch user details', TOAST.ERROR)
-            })
-            
+            })       
     }
     
     const updateProfile = () => {
@@ -57,17 +67,52 @@ export default function Header({ isAuth }) {
         
     }
     
+        
+    const updatePassword = () => {
+        const userObj  = getUser()
+        console.log(userPassword.password+":"+userPassword2.password)
+        if(userPassword.password != userPassword2.password) {
+            addToast('Passwords do not match', TOAST.ERROR)
+            return;
+        }
+        const hash = md5(userPassword.password)
+        setUserPassword(hash)
+        postData(ENDPOINT.USERS + `/${userObj.id}/password`, userPassword.password)
+        .then((data) => {
+            handleCloseModalPassword();
+        })
+        .catch((ex) => {
+            addToast('Failed to fetch user details', TOAST.ERROR)
+        })
+        
+    }
+
+
     const handleCloseModalProfile = () => {
        setShowModalProfile(false)
     }
+     
+    const handleCloseModalPassword = () => {
+        setShowModalPassword(false)
+     }   
     
-    
-    const userPassword = () => {
-        ;
+    const userPasswordModal = () => {
+        const userObj  = getUser()
+        setShowModalPassword(true)
     }
     
     const updateForm = (prop, value) => {
         setUserDetails({ ...userDetails, [prop]: value })
+    }
+    const updatePasswordForm = (prop, value) => {
+        setUserPassword({ ...userPassword, [prop]: value })
+    }
+    const updatePasswordForm2 = (prop, value) => {
+        setUserPassword2({ ...userPassword2, [prop]: value })
+    }
+    
+    const deleteAccount = () => {
+        ;
     }
 
     
@@ -87,7 +132,7 @@ export default function Header({ isAuth }) {
                                 <img alt="" src={imagePerson} style={{ marginLeft: '15px', marginRight: '-25px', marginTop: '5px', height: '30px' }} />
                                 <SplitButton variant={'link'} title="" alignRight>
                                     <Dropdown.Item eventKey="3" onClick={userProfile}>Profile</Dropdown.Item>
-                                    <Dropdown.Item eventKey="2" onClick={userPassword}>Change Password</Dropdown.Item>
+                                    <Dropdown.Item eventKey="2" onClick={userPasswordModal}>Change Password</Dropdown.Item>
                                     <Dropdown.Item eventKey="1" onClick={logout}>Logout</Dropdown.Item>
                                 </SplitButton>
                             </>}
@@ -103,32 +148,62 @@ export default function Header({ isAuth }) {
 
             
             <Modal show={showModalProfile} onHide={handleCloseModalProfile}>
-            <Modal.Header closeButton>
-                <Modal.Title>Update User Profile</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Form.Group>
-                        <Form.Label>Organization</Form.Label>
-                        <Form.Control type="text" value={userDetails.organization} onChange={(e) => updateForm('organization', e.target.value)} placeholder="Enter organization" />
-                    </Form.Group>
+                <Modal.Header closeButton>
+                    <Modal.Title>Update User Profile</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
                     <Form.Group>
-                        <Form.Label>Name</Form.Label>
-                        <Form.Control type="text" value={userDetails.name} onChange={(e) => updateForm('name', e.target.value)} placeholder="Type a username" />
-                    </Form.Group>
-                    <Form.Group controlId="formBasicEmail">
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" value={userDetails.email} onChange={(e) => updateForm('email', e.target.value)} placeholder="Enter email" />
-                    </Form.Group>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="primary" onClick={() => updateProfile()}>
-                    Update Profile
-                </Button>
-                <Button variant="secondary" onClick={handleCloseModalProfile}>
-                    Close
-                </Button>
-            </Modal.Footer>
+                            <Form.Label>Organization</Form.Label>
+                            <Form.Control type="text" value={userDetails.organization} onChange={(e) => updateForm('organization', e.target.value)} placeholder="Enter organization" />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control type="text" value={userDetails.name} onChange={(e) => updateForm('name', e.target.value)} placeholder="Type a username" />
+                        </Form.Group>
+                        <Form.Group controlId="formBasicEmail">
+                            <Form.Label>Email address</Form.Label>
+                            <Form.Control type="email" value={userDetails.email} onChange={(e) => updateForm('email', e.target.value)} placeholder="Enter email" />
+                        </Form.Group>
+                        <Form.Group controlId="formBasicEmail">
+                            <Button variant="danger" className="pull-right" onClick={() => deleteAccount()}>
+                            Delete Account
+                            </Button>
+                        </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={() => updateProfile()}>
+                        Update Profile
+                    </Button>
+                    <Button variant="secondary" onClick={handleCloseModalProfile}>
+                        Close
+                    </Button>
+                </Modal.Footer>
             </Modal>
+
+            <Modal show={showModalPassword} onHide={handleCloseModalPassword}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Update User Password</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group>
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control type="password" value={userPassword.password} onChange={(e) => updatePasswordForm('password', e.target.value)} placeholder="Enter your password" />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Password (verify)</Form.Label>
+                            <Form.Control type="password" value={userPassword2.name} onChange={(e) => updatePasswordForm2('password', e.target.value)} placeholder="Enter you password (verify)" />
+                        </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={() => updatePassword()}>
+                        Update Password
+                    </Button>
+                    <Button variant="secondary" onClick={handleCloseModalPassword}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
         </React.Fragment>
     )
 }

@@ -9,7 +9,7 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 const LINKS = {
     FAQ: "https://share3d.eu/support/faqs/",
-    GUIDELINES: "https://share3d.eu/support/",
+    GUIDELINES: "https://share3d.gitbook.io/share-3d-guidelines/",
     TUTORIALS: "https://share3d.eu/support/",
     WEBSITE: "https://share3d.eu/",
     LEARNMORE: "https://share3d.eu/about/"
@@ -167,7 +167,7 @@ function StoryList({ title, stories }) {
                                 comments={story.commentsCount}
                                 views={story.viewsCount}
                                 description={story.description}
-
+                                category={story.category}
                             />
                         })
                 }

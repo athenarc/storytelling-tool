@@ -45,7 +45,7 @@ const Explore = (props) => {
                             <Col className="max-content my-auto"><div className="f-12 body-secondary">Filter by type:</div></Col>
                             <Col className="max-content my-auto"><Checkbox label="Hotspot" checked={filter.hotspot} onChange={handleChange('hotspot')} /></Col>
                             <Col className="max-content my-auto"><Checkbox label="Timeline" checked={filter.timeline} onChange={handleChange('timeline')} /></Col>
-                            <Col className="max-content my-auto"><Checkbox label="Slideshare" checked={filter.slideshare} onChange={handleChange('slideshare')} /></Col>
+                            <Col className="max-content my-auto"><Checkbox label="Slideshow" checked={filter.slideshare} onChange={handleChange('slideshare')} /></Col>
                         </Row>
                     </Col>
                 </Row>
@@ -74,7 +74,7 @@ const Explore = (props) => {
                                     comments={story.commentsCount}
                                     views={story.viewsCount}
                                     description={story.description}
-
+                                    category={story.category}
                                 />
                             })
                     }
