@@ -23,11 +23,14 @@ export default function Header({ isAuth }) {
     const PasswordSchema = {
         password: ""
     }
+    const PasswordSchema2 = {
+        password: ""
+    }
 
     const [showModalProfile, setShowModalProfile] = useState(false)
     const [userDetails, setUserDetails] = useState(UserDetailsSchema)
     const [userPassword, setUserPassword] = useState(PasswordSchema)
-    const [userPassword2, setUserPassword2] = useState(PasswordSchema)
+    const [userPassword2, setUserPassword2] = useState(PasswordSchema2)
     const [showModalPassword, setShowModalPassword] = useState(false)
 
 
@@ -67,13 +70,14 @@ export default function Header({ isAuth }) {
         
     const updatePassword = () => {
         const userObj  = getUser()
-        if(userPassword != userPassword2) {
+        console.log(userPassword.password+":"+userPassword2.password)
+        if(userPassword.password != userPassword2.password) {
             addToast('Passwords do not match', TOAST.ERROR)
             return;
         }
-        const hash = md5(userPassword)
+        const hash = md5(userPassword.password)
         setUserPassword(hash)
-        postData(ENDPOINT.USERS + `/${userObj.id}/password`, userPassword)
+        postData(ENDPOINT.USERS + `/${userObj.id}/password`, userPassword.password)
         .then((data) => {
             handleCloseModalPassword();
         })
@@ -106,6 +110,11 @@ export default function Header({ isAuth }) {
     const updatePasswordForm2 = (prop, value) => {
         setUserPassword2({ ...userPassword2, [prop]: value })
     }
+    
+    const deleteAccount = () => {
+        ;
+    }
+
     
     return (
         <React.Fragment>
@@ -154,6 +163,11 @@ export default function Header({ isAuth }) {
                         <Form.Group controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>
                             <Form.Control type="email" value={userDetails.email} onChange={(e) => updateForm('email', e.target.value)} placeholder="Enter email" />
+                        </Form.Group>
+                        <Form.Group controlId="formBasicEmail">
+                            <Button variant="danger" className="pull-right" onClick={() => deleteAccount()}>
+                            Delete Account
+                            </Button>
                         </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>

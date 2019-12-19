@@ -34,6 +34,7 @@ export default function StoryItem(props) {
                         <img width="20" height="20" alt="" src={require('../../assets/ico-person.png')} />
                         <div className="mr-auto f-12 body-secondary">{userName}</div>
 
+                        {/*
                         <img width="20" height="20" alt="" src={require('../../assets/ico-person.png')} />
                         <div className="f-12 body-secondary">{comments}</div>
 
@@ -42,7 +43,7 @@ export default function StoryItem(props) {
 
                         <img width="20" height="20" alt="" src={require('../../assets/ico-person.png')} />
                         <div className="f-12 body-secondary">{stars}</div>
-
+                        */}
                     </div>
                 </div>
 

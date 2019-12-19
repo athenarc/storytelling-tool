@@ -249,7 +249,8 @@ export default class StoryView extends Component {
                         <div className="d-flex bg-white p-1  align-items-center">
                             <img className="mx-1" alt="" width="20" height="20" src={require('../../assets/ico-person.png')} />
                             <div className="mx-1 mr-auto f-12">{story.createdBy.name}</div>
-
+                            
+                            {/*}
                             <img className="mx-1" alt="" width="20" height="20" src={require('../../assets/ico-person.png')} />
                             <div className="mx-1 body-secondary f-12">{getValue('viewsCount')}</div>
 
@@ -258,6 +259,7 @@ export default class StoryView extends Component {
 
                             <img className="mx-1" alt="" width="20" height="20" src={require('../../assets/ico-person.png')} />
                             <div className="mx-1 body-secondary f-12">{getValue('starredCount')}</div>
+                            */}
                         </div>
 
                         <div className="d-flex flex-column py-2" style={{ flex: 1, maxHeight: 340, overflow: 'auto' }}>
