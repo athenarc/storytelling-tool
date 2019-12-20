@@ -34,25 +34,26 @@ export default function Assets(props) {
 
 
     const handleChange = input => () => {
-        switch(input) {
-            case 'fab': 
+        switch (input) {
+            case 'fab':
                 setSearchOnSketchfab(!searchOnSketchfab)
                 return
-            case 'europeana': 
+            case 'europeana':
                 setSearchOnEuropeana(!searchOnEuropeana)
                 return
-            case 'uploads': 
+            case 'uploads':
                 setSearchOnUploads(!searchOnUploads)
                 return
+            default: break;
         }
     }
 
     const getAssets = () => {
-        if(!isLoading && query && assets && assets.length===0) {
-            return <div style={styles.notFound}><br/><br/><br/>No results found, please try a new inquiry</div>
+        if (!isLoading && query && assets && assets.length === 0) {
+            return <div style={styles.notFound}><br /><br /><br />No results found, please try a new inquiry</div>
         }
-        if(!query && assets && assets.length===0) {
-            return <div style={styles.notFound}><br/><br/><br/>Search to reveal 3D models</div>
+        if (!query && assets && assets.length === 0) {
+            return <div style={styles.notFound}><br /><br /><br />Search to reveal 3D models</div>
         }
         return assets.map((model, index) => {
             return <Card key={index} style={styles.cardItem} onClick={() => {

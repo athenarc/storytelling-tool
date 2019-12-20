@@ -11,7 +11,7 @@ const getMultipartHeaders = (bearer) => {
         'Authorization': bearer ? "Bearer " + getJwtToken() : getJwtToken()
     }
 }
-const getDefaultHeaders = (bearer) => {
+export const getDefaultHeaders = (bearer) => {
     return {
         "Content-Type": "application/json",
         'Authorization': bearer ? "Bearer " + getJwtToken() : getJwtToken()
@@ -80,7 +80,7 @@ export const postUpload = (url, data, readJson = true) => {
 
 
 
-const getJwtToken = () => getCredential('token')
+export const getJwtToken = () => getCredential('token')
 export const getUser = () => getCredential('user')
 
 const getCredential = (prop) => {

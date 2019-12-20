@@ -2,21 +2,49 @@ import React, { useState, useEffect } from 'react'
 import { Row, Col, Button, Container, Modal } from 'react-bootstrap'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSave, faTrashAlt, faCaretRight } from '@fortawesome/free-solid-svg-icons'
-import { fetchData, postData, deleteData, maxLetters } from '../../utils'
+import { fetchData, deleteData, } from '../../utils'
 import { ENDPOINT } from '../../config'
-import imagePlaceholder from '../../assets/image-placeholder.png';
+import UploadModal from './UploadModal'
+import Spinner from '../lib/Spinner'
 library.add(faSave, faTrashAlt, faCaretRight)
+
+function StoryItem({ item, confirmDelete }) {
+    return <Row className="mt-2" key={item.uid}>
+        <Col style={styles.maxContent}>
+            <img alt="" src={item.uri} style={styles.itemImage} />
+        </Col>
+        <Col style={{ display: 'flex', flexDirection: 'column' }}>
+            <h4 className="header-primary">{item.name}</h4>
+            {/* <div className="body-secondary">{maxLetters(story.description, 250)}</div> */}
+            <Row className="mt-auto">
+                {/* <Col style={styles.maxContent}><Button variant={story.isPublic ? 'success' : 'primary'}>{story.isPublic ? 'Published' : 'Private'}</Button></Col> */}
+                {/* <Col style={styles.maxContent}><Button variant="secondary" onClick={() => props.history.push(`/stories/${story.id}/view`)}>View</Button></Col> */}
+                {/* <Col style={styles.maxContent}><Button variant="secondary" onClick={() => props.history.push(`/stories/${story.id}/edit`)}>Edit</Button></Col> */}
+                <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmDelete(item.uid)}>Delete</Button></Col>
+                {/* {!story.isPublic && <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmShare(story.id)}>Publish</Button></Col>} */}
+                {/* {story.isPublic && <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmUnShare(story.id)}>UnShare</Button></Col>} */}
+            </Row>
+        </Col>
+    </Row>
+}
 
 const Uploads = (props) => {
 
     const [deleteUploadId, setDeleteUploadId] = useState(0)
     const [uploads, setUploads] = useState([])
     const [showModalDelete, setShowModalDelete] = useState(false)
+    const [openUpload, setOpenUpload] = useState(false)
+    const [busy, setBusy] = useState(false)
+
+    const getUploads = (callback) => {
+        setBusy(true)
+        fetchData(ENDPOINT.UPLOADS)
+            .then(data => { setUploads(data); setBusy(false); callback && callback() })
+            .catch(ex => { console.log(ex); setBusy(false) })
+    }
 
     useEffect(() => {
-        fetchData(ENDPOINT.UPLOADS)
-            .then(data => setUploads(data))
-            .catch(ex => console.log(ex))
+        getUploads()
     }, [])
 
     const handleCloseModalDelete = () => {
@@ -33,7 +61,7 @@ const Uploads = (props) => {
             deleteData(ENDPOINT.UPLOADS + `/${deleteUploadId}`, null)
                 .then(() => {
                     setUploads(uploads.filter(function (upload) {
-                        return upload.id !== deleteUploadId
+                        return upload.uid !== deleteUploadId
                     }))
                 })
                 .catch(ex => console.log(ex))
@@ -41,35 +69,19 @@ const Uploads = (props) => {
         }
     }
 
-    const getUploadItem = (upload) => {
-/*
-        let storyImage = imagePlaceholder;
-        if (story.chapters && story.chapters.length > 0 && story.chapters[0].assets.length > 0)
-            storyImage = story.chapters[0].assets[0].thumbnail
+    // categories: null
+    // description: null
+    // embedUrl: null
+    // id: null
+    // language: ""
+    // name: "test"
+    // rights: ""
+    // source: "uploads"
+    // tags: null
+    // thumbnail: ""
+    // uid: "1"
+    // uri: "https://app-share3d.imsi.athenarc.gr:8082/assets/upload/1/americano.png"
 
-        let categoryImage = <img alt="Slideshow" src={require('../../assets/story-2.png')} height={20} />
-        if (story.category === 2) categoryImage = <img alt="Hotspots" src={require('../../assets/story-3.png')} height={20} />
-        if (story.category === 3) categoryImage = <img alt="Timeline" src={require('../../assets/story-1.png')} height={20} />
-
-        return <Row className="mt-2" key={story.id}>
-            <Col style={styles.maxContent}>
-                <img alt="" src={storyImage} style={styles.itemImage} />
-            </Col>
-            <Col style={{ display: 'flex', flexDirection: 'column' }}>
-                <h4 className="header-primary">{story.title} {story.category} {categoryImage}</h4>
-                <div className="body-secondary">{maxLetters(story.description, 250)}</div>
-                <Row className="mt-auto">
-                    <Col style={styles.maxContent}><Button variant={story.isPublic ? 'success' : 'primary'}>{story.isPublic ? 'Published' : 'Private'}</Button></Col>
-                    <Col style={styles.maxContent}><Button variant="secondary" onClick={() => props.history.push(`/stories/${story.id}/view`)}>View</Button></Col>
-                    <Col style={styles.maxContent}><Button variant="secondary" onClick={() => props.history.push(`/stories/${story.id}/edit`)}>Edit</Button></Col>
-                    <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmDelete(story.id)}>Delete</Button></Col>
-                    {!story.isPublic && <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmShare(story.id)}>Publish</Button></Col>}
-                    {story.isPublic && <Col style={styles.maxContent}><Button variant="secondary" onClick={() => confirmUnShare(story.id)}>UnShare</Button></Col>}
-                </Row>
-            </Col>
-        </Row>
-        */
-    }
 
     return (
         <React.Fragment >
@@ -77,10 +89,14 @@ const Uploads = (props) => {
                 <Row>
                     <Col><Button className="w-100" size="lg">My Uploads</Button></Col>
                 </Row>
-                {
-                    uploads.map(upload => getUploadItem(upload))
-                }
+                {busy && <Spinner />}
+                {uploads.map(item => <StoryItem key={item.uid} item={item} confirmDelete={confirmDelete} />)}
+                <Button variant="secondary" style={{ position: "fixed", bottom: 0, right: 0, margin: 20 }} onClick={() => setOpenUpload(true)}>
+                    Upload Image
+                </Button>
             </Container>
+
+
             <Modal show={showModalDelete} onHide={handleCloseModalDelete}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirm delete</Modal.Title>
@@ -98,6 +114,11 @@ const Uploads = (props) => {
                 </Modal.Footer>
             </Modal>
 
+            <UploadModal
+                show={openUpload}
+                handleClose={() => setOpenUpload(false)}
+                getUploads={getUploads}
+            />
         </React.Fragment>
     )
 
