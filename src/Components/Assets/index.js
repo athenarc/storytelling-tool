@@ -13,13 +13,14 @@ export default function Assets(props) {
     const [query, setQuery] = useState("")
     const [searchOnSketchfab, setSearchOnSketchfab] = useState(true)
     const [searchOnEuropeana, setSearchOnEuropeana] = useState(true)
+    const [searchOnUploads, setSearchOnUploads] = useState(true)
     const [assets, setAssets] = useState([])
     const [isLoading, setIsLoading] = useState(false)
 
 
-    const performSearch = React.useCallback((searchOnSketchfab, searchOnEuropeana) => {
+    const performSearch = React.useCallback((searchOnSketchfab, searchOnEuropeana, searchOnUploads) => {
         setIsLoading(true)
-        postData(ENDPOINT.ASSETS.SEARCH, { query, searchOnSketchfab, searchOnEuropeana, }, true)
+        postData(ENDPOINT.ASSETS.SEARCH, { query, searchOnSketchfab, searchOnEuropeana, searchOnUploads }, true)
             .then(assets => {
                 setAssets(assets)
                 setIsLoading(false)
@@ -28,14 +29,22 @@ export default function Assets(props) {
     }, [query])
 
     useEffect(() => {
-        performSearch(searchOnSketchfab, searchOnEuropeana)
-    }, [searchOnSketchfab, searchOnEuropeana, performSearch])
+        performSearch(searchOnSketchfab, searchOnEuropeana, searchOnUploads)
+    }, [searchOnSketchfab, searchOnEuropeana, searchOnUploads, performSearch])
 
 
     const handleChange = input => () => {
-        input === 'fab'
-            ? setSearchOnSketchfab(!searchOnSketchfab)
-            : setSearchOnEuropeana(!searchOnEuropeana)
+        switch(input) {
+            case 'fab': 
+                setSearchOnSketchfab(!searchOnSketchfab)
+                return
+            case 'europeana': 
+                setSearchOnEuropeana(!searchOnEuropeana)
+                return
+            case 'uploads': 
+                setSearchOnUploads(!searchOnUploads)
+                return
+        }
     }
 
     const getAssets = () => {
@@ -77,6 +86,7 @@ export default function Assets(props) {
                 <Col className="max-content"><h6 className="d-inline header-primary mr-4 mt-1">FILTER</h6></Col>
                 <Col className="max-content"><Checkbox label="Sketchfab" checked={searchOnSketchfab} onChange={handleChange('fab')} /></Col>
                 <Col className="max-content"><Checkbox label="Europeana" checked={searchOnEuropeana} onChange={handleChange('europeana')} /></Col>
+                <Col className="max-content"><Checkbox label="Uploads" checked={searchOnUploads} onChange={handleChange('uploads')} /></Col>
                 <Col md={5} className="max-content"><sub className="d-inline header-primary mr-4 mt-1">* all assets are open licensed</sub></Col>
             </Row>
             <div style={styles.cardContainer}>

@@ -129,6 +129,7 @@ export default function Header({ isAuth }) {
                                 <NavLink to={`/workspace`} style={styles.navlink}>Create a story</NavLink>
                                 <NavLink to={`/assets`} style={styles.navlink}>Search Assets</NavLink>
                                 <NavLink to={`/stories`} style={styles.navlink}>My Stories</NavLink>
+                                <NavLink to={`/uploads`} style={styles.navlink}>My Uploads</NavLink>
                                 <img alt="" src={imagePerson} style={{ marginLeft: '15px', marginRight: '-25px', marginTop: '5px', height: '30px' }} />
                                 <SplitButton variant={'link'} title="" alignRight>
                                     <Dropdown.Item eventKey="3" onClick={userProfile}>Profile</Dropdown.Item>
