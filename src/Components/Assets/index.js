@@ -13,13 +13,14 @@ export default function Assets(props) {
     const [query, setQuery] = useState("")
     const [searchOnSketchfab, setSearchOnSketchfab] = useState(true)
     const [searchOnEuropeana, setSearchOnEuropeana] = useState(true)
+    const [searchOnUploads, setSearchOnUploads] = useState(true)
     const [assets, setAssets] = useState([])
     const [isLoading, setIsLoading] = useState(false)
 
 
-    const performSearch = React.useCallback((searchOnSketchfab, searchOnEuropeana) => {
+    const performSearch = React.useCallback((searchOnSketchfab, searchOnEuropeana, searchOnUploads) => {
         setIsLoading(true)
-        postData(ENDPOINT.ASSETS.SEARCH, { query, searchOnSketchfab, searchOnEuropeana, }, true)
+        postData(ENDPOINT.ASSETS.SEARCH, { query, searchOnSketchfab, searchOnEuropeana, searchOnUploads }, true)
             .then(assets => {
                 setAssets(assets)
                 setIsLoading(false)
@@ -28,22 +29,53 @@ export default function Assets(props) {
     }, [query])
 
     useEffect(() => {
-        performSearch(searchOnSketchfab, searchOnEuropeana)
-    }, [searchOnSketchfab, searchOnEuropeana, performSearch])
+        performSearch(searchOnSketchfab, searchOnEuropeana, searchOnUploads)
+    }, [searchOnSketchfab, searchOnEuropeana, searchOnUploads, performSearch])
+
+
+    const isEuropeana = (assetSource) => {
+        if(assetSource==='europeana') 
+            return true;
+        else
+            return false;
+    }
+
+    const isSketchfab = (assetSource) => {
+        if(assetSource==='sketchfab') 
+            return true;
+        else
+            return false;
+    }
+
+    const isUpload = (assetSource) => {
+        if(assetSource==='uploads') 
+            return true;
+        else
+            return false;
+    }
 
 
     const handleChange = input => () => {
-        input === 'fab'
-            ? setSearchOnSketchfab(!searchOnSketchfab)
-            : setSearchOnEuropeana(!searchOnEuropeana)
+        switch (input) {
+            case 'fab':
+                setSearchOnSketchfab(!searchOnSketchfab)
+                return
+            case 'europeana':
+                setSearchOnEuropeana(!searchOnEuropeana)
+                return
+            case 'uploads':
+                setSearchOnUploads(!searchOnUploads)
+                return
+            default: break;
+        }
     }
 
     const getAssets = () => {
-        if(!isLoading && query && assets && assets.length===0) {
-            return <div style={styles.notFound}><br/><br/><br/>No results found, please try a new inquiry</div>
+        if (!isLoading && query && assets && assets.length === 0) {
+            return <div style={styles.notFound}><br /><br /><br />No results found, please try a new inquiry</div>
         }
-        if(!query && assets && assets.length===0) {
-            return <div style={styles.notFound}><br/><br/><br/>Search to reveal 3D models</div>
+        if (!query && assets && assets.length === 0) {
+            return <div style={styles.notFound}><br /><br /><br />Search to reveal 3D models</div>
         }
         return assets.map((model, index) => {
             return <Card key={index} style={styles.cardItem} onClick={() => {
@@ -54,8 +86,9 @@ export default function Assets(props) {
                 {/* {model.embedUrl && <Iframe url={model.embedUrl} />} */}
                 <Card.Body className="p-1 d-flex" style={{ alignItems: 'center' }}>
                     <Card.Text className="body-secondary p-1 my-0 f-12 mr-auto">{model.name}</Card.Text>
-                    {model.embedUrl && <img alt="" width="18" height="18" className="m-1" src={require('../../assets/logo-sketchfab.png')} />}
-                    {!model.embedUrl && <img alt="" width="15" height="18" className="m-1" src={require('../../assets/logo-europeana.png')} />}
+                    {isSketchfab(model.source) && <img alt="" width="18" height="18" className="m-1" src={require('../../assets/logo-sketchfab.png')} />}
+                    {isEuropeana(model.source) && <img alt="" width="15" height="18" className="m-1" src={require('../../assets/logo-europeana.png')} />}
+                    {isUpload(model.source) && <img alt="" width="15" height="18" className="m-1" src={require('../../assets/logo-uploads.png')} />}
                 </Card.Body>
             </Card>
         })
@@ -77,6 +110,7 @@ export default function Assets(props) {
                 <Col className="max-content"><h6 className="d-inline header-primary mr-4 mt-1">FILTER</h6></Col>
                 <Col className="max-content"><Checkbox label="Sketchfab" checked={searchOnSketchfab} onChange={handleChange('fab')} /></Col>
                 <Col className="max-content"><Checkbox label="Europeana" checked={searchOnEuropeana} onChange={handleChange('europeana')} /></Col>
+                <Col className="max-content"><Checkbox label="Uploads" checked={searchOnUploads} onChange={handleChange('uploads')} /></Col>
                 <Col md={5} className="max-content"><sub className="d-inline header-primary mr-4 mt-1">* all assets are open licensed</sub></Col>
             </Row>
             <div style={styles.cardContainer}>

@@ -286,3 +286,15 @@ h3 {
   color: white;
   font-size: 12px;
 }
+
+/* Dropzone */
+.dropzone {
+  border: 4px dotted #D6D5D5;
+  border-radius: 10px;
+  padding: 10px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}

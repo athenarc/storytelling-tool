@@ -10,6 +10,7 @@ import Home from './Home'
 import Workspace from './Workspace';
 import Assets from './Assets';
 import Stories from './Stories';
+import Uploads from './Uploads';
 import Explore from './Explore';
 import LearnMore from './LearnMore';
 import StoryView from './Stories/StoryView';
@@ -35,6 +36,7 @@ export default function Origin(props) {
                     <Route path="/explore" component={Explore} />
                     <PrivateRoute permissions={[isAuth]} isLoading={isLoading} path="/learnmore" component={LearnMore} />
                     <PrivateRoute permissions={[isAuth]} isLoading={isLoading} exact path="/stories" component={Stories} />
+                    <PrivateRoute permissions={[isAuth]} isLoading={isLoading} exact path="/uploads" component={Uploads} />
                     <Route permissions={[isAuth]} isLoading={isLoading} path="/stories/:id/view" component={StoryView} />
                     <PrivateRoute permissions={[isAuth]} isLoading={isLoading} path="/stories/:id/edit" component={StoryEditor} />
                     <Route {...props} path="/login" component={(props) => <Login {...props} login={login} isAuth={isAuth} />} />

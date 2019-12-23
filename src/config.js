@@ -7,8 +7,10 @@ export const ENDPOINT = {
         SIGNUP: BASE_URL + '/auth/signup',
     },
     STORIES: BASE_URL + '/stories',
+    UPLOADS: BASE_URL + '/assets/upload',
     STORIES_PUBLIC: BASE_URL + '/stories/public',
     ASSETS: {
+        UPLOAD: BASE_URL + "/assets/upload",
         SEARCH: BASE_URL + '/assets/search'
     },
     USERS: BASE_URL + '/users'

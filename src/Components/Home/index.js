@@ -183,7 +183,7 @@ function Home(props) {
     const [stories, setStories] = useState([])
 
     useEffect(() => {
-        fetchData(ENDPOINT.STORIES_PUBLIC)
+        fetchData(ENDPOINT.STORIES_PUBLIC+'?isFeatured=true')
             .then(data => setStories(data))
             .catch(ex => console.log(ex))
     }, [])
