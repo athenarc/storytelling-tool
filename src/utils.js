@@ -2,10 +2,10 @@
 import { toast } from 'react-toastify'
 import * as Resources from './resources'
 /*****************************************
- *              Networking    
+ *              Networking
 *****************************************/
 
-const getMultipartHeaders = (bearer) => {
+export const getMultipartHeaders = (bearer) => {
     return {
         //'Content-Type': 'multipart/form-data',
         'Authorization': bearer ? "Bearer " + getJwtToken() : getJwtToken()
@@ -147,15 +147,4 @@ export const maxLetters = (word, max) => {
         return word.substring(0, max) + '...'
     }
     return word
-}
-
-/*****************************************
- *              Networking
-*****************************************/
-
-export const getMultipartHeaders = (bearer) => {
-    return {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': bearer ? "Bearer " + getJwtToken() : getJwtToken()
-    }
 }
