@@ -148,3 +148,14 @@ export const maxLetters = (word, max) => {
     }
     return word
 }
+
+/*****************************************
+ *              Networking
+*****************************************/
+
+export const getMultipartHeaders = (bearer) => {
+    return {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': bearer ? "Bearer " + getJwtToken() : getJwtToken()
+    }
+}

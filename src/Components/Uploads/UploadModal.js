@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const config = {
-    headers: getDefaultHeaders()
+    headers: getMultipartHeaders(true)
 }
 function MyDropzone({ setAcceptedFiles, acceptedFiles }) {
     const onDrop = useCallback(acceptedFiles => {
