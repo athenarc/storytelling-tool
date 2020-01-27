@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { Modal, Button, Form } from 'react-bootstrap'
 import { useDropzone } from 'react-dropzone'
-import { getDefaultHeaders, addToast } from '../../utils'
+import { getMultipartHeaders, addToast } from '../../utils'
 import { ENDPOINT } from '../../config'
 import axios from 'axios'
 import { TOAST } from '../../resources'
