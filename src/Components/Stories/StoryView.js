@@ -193,15 +193,15 @@ export default class StoryView extends Component {
                     const asset = ch.assets[0]
                     return <div className="each-slide" style={{ position: 'relative' }} key={index}>
                         {!asset.embedUrl &&
-                        <div className="carousel-image-container" style={{ 'backgroundImage': `url(${asset.thumbnail})`, height: 480 }} />
+                            <div className="carousel-image-container" style={{ 'backgroundImage': `url(${asset.thumbnail})`, height: 480 }} />
                             // <div className="carousel-image-container">
                             //     <img alt="" src={asset.thumbnail} styles={{ height: 480, maxWidth: 100 + '%' }} />
                             // </div>
                         } {
-                        asset.embedUrl &&
-                        <iframe title={asset.id} className="w-100" src={asset.embedUrl} style={{ height: 480 }}></iframe>
+                            asset.embedUrl &&
+                            <iframe title={asset.id} className="w-100" src={asset.embedUrl} style={{ height: 480 }}></iframe>
 
-                    }
+                        }
                     </div>
                 })
         }
@@ -249,7 +249,7 @@ export default class StoryView extends Component {
                         <div className="d-flex bg-white p-1  align-items-center">
                             <img className="mx-1" alt="" width="20" height="20" src={require('../../assets/ico-person.png')} />
                             <div className="mx-1 mr-auto f-12">{story.createdBy.name}</div>
-
+                            
                             {/*}
                             <img className="mx-1" alt="" width="20" height="20" src={require('../../assets/ico-person.png')} />
                             <div className="mx-1 body-secondary f-12">{getValue('viewsCount')}</div>
@@ -324,9 +324,9 @@ export default class StoryView extends Component {
                         </div>
                         <div className="d-flex">
                             {asset && asset.embedUrl &&
-                            <iframe title={asset.id} src={asset.embedUrl} style={{ width: 700, maxHeight: 400, height: 400 }}></iframe>}
+                                <iframe title={asset.id} src={asset.embedUrl} style={{ width: 700, maxHeight: 400, height: 400 }}></iframe>}
                             {asset && asset.thumbnail && !asset.embedUrl &&
-                            <img alt="" src={asset.thumbnail} style={{ width: 700, maxHeight: 400 }} />}
+                                <img alt="" src={asset.thumbnail} style={{ width: 700, maxHeight: 400 }} />}
                         </div>
                         {/* any arbitrary component can go here */}
                     </div>
@@ -362,7 +362,6 @@ export default class StoryView extends Component {
 
                 <div className="text-center">
                     <Button onClick={() => goBack()} className="btn btn-secondary btn-md ml-2">Exit Preview</Button>
-                    <Button onClick={() => this.props.history.push(`/stories/${this.state.story.id}/pdf-viewer`)} className="btn btn-primary btn-md ml-2">PDF Viewer</Button>
                 </div>
                 <br />
                 <Row>
