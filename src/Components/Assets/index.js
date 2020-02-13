@@ -33,28 +33,6 @@ export default function Assets(props) {
     }, [searchOnSketchfab, searchOnEuropeana, searchOnUploads, performSearch])
 
 
-    const isEuropeana = (assetSource) => {
-        if(assetSource==='europeana') 
-            return true;
-        else
-            return false;
-    }
-
-    const isSketchfab = (assetSource) => {
-        if(assetSource==='sketchfab') 
-            return true;
-        else
-            return false;
-    }
-
-    const isUpload = (assetSource) => {
-        if(assetSource==='uploads') 
-            return true;
-        else
-            return false;
-    }
-
-
     const handleChange = input => () => {
         switch (input) {
             case 'fab':
@@ -86,9 +64,8 @@ export default function Assets(props) {
                 {/* {model.embedUrl && <Iframe url={model.embedUrl} />} */}
                 <Card.Body className="p-1 d-flex" style={{ alignItems: 'center' }}>
                     <Card.Text className="body-secondary p-1 my-0 f-12 mr-auto">{model.name}</Card.Text>
-                    {isSketchfab(model.source) && <img alt="" width="18" height="18" className="m-1" src={require('../../assets/logo-sketchfab.png')} />}
-                    {isEuropeana(model.source) && <img alt="" width="15" height="18" className="m-1" src={require('../../assets/logo-europeana.png')} />}
-                    {isUpload(model.source) && <img alt="" width="15" height="18" className="m-1" src={require('../../assets/logo-uploads.png')} />}
+                    {model.embedUrl && <img alt="" width="18" height="18" className="m-1" src={require('../../assets/logo-sketchfab.png')} />}
+                    {!model.embedUrl && <img alt="" width="15" height="18" className="m-1" src={require('../../assets/logo-europeana.png')} />}
                 </Card.Body>
             </Card>
         })

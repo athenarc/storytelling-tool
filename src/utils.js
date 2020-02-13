@@ -7,7 +7,7 @@ import * as Resources from './resources'
 
 export const getMultipartHeaders = (bearer) => {
     return {
-        //'Content-Type': 'multipart/form-data',
+        'Content-Type': 'multipart/form-data',
         'Authorization': bearer ? "Bearer " + getJwtToken() : getJwtToken()
     }
 }

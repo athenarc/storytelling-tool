@@ -19,6 +19,7 @@ import Login from './Login/Login'
 import Register from './Login/Register'
 import StoryEditor from './Stories/StoryEditor';
 import PrivateRoute from './lib/PrivateRoute';
+import StoryPdfViewer from "./Stories/StoryPdfViewer";
 
 export default function Origin(props) {
     const { isLoading, isAuth, register, login } = props
@@ -38,6 +39,7 @@ export default function Origin(props) {
                     <PrivateRoute permissions={[isAuth]} isLoading={isLoading} exact path="/stories" component={Stories} />
                     <PrivateRoute permissions={[isAuth]} isLoading={isLoading} exact path="/uploads" component={Uploads} />
                     <Route permissions={[isAuth]} isLoading={isLoading} path="/stories/:id/view" component={StoryView} />
+                    <Route permissions={[isAuth]} isLoading={isLoading} path="/stories/:id/pdf-viewer" component={StoryPdfViewer} />
                     <PrivateRoute permissions={[isAuth]} isLoading={isLoading} path="/stories/:id/edit" component={StoryEditor} />
                     <Route {...props} path="/login" component={(props) => <Login {...props} login={login} isAuth={isAuth} />} />
                     <Route {...props} path="/register" component={(props) => <Register {...props} register={register} isAuth={isAuth} />} />} />
