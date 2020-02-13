@@ -362,7 +362,7 @@ export default class StoryView extends Component {
 
                 <div className="text-center">
                     <Button onClick={() => goBack()} className="btn btn-secondary btn-md ml-2">Exit Preview</Button>
-                    <Button onClick={() => this.props.history.push(`/stories/${this.state.story.id}/pdf-viewer`)} className="btn btn-primary btn-md ml-2">PDF Viewer</Button>
+                    {story && story.category !==2 && <Button onClick={() => this.props.history.push(`/stories/${this.state.story.id}/pdf-viewer`)} className="btn btn-primary btn-md ml-2">PDF Viewer</Button>}
                 </div>
                 <br />
                 <Row>
