@@ -166,11 +166,16 @@ export default class StoryView extends Component {
 
             api.getCameraLookAt((err, camera) => {
                 const position = JSON.parse(chapter.position);
+                let target = JSON.parse(chapter.target);
+                if(!chapter.target)
+                    target = camera.target
+
                 if (position)
                     api.createAnnotation(
                         position,
                         [0, 0, 0],
-                        [position[0] * 3, position[1] * 3, position[2] * 2],
+                        //[position[0] * 3, position[1] * 3, position[2] * 2],
+                        target,
                         camera.target,
                         chapter.title,
                         chapterDesc

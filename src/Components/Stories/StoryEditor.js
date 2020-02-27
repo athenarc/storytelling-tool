@@ -1,17 +1,36 @@
 import React, { Component, Fragment } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import {
+  deleteData,
   fetchData,
   postData,
-  deleteData,
-  updateData,
-  isValidDate
+  safeArray,
+  unwrap,
+  updateData
 } from "../../utils";
 import { ENDPOINT } from "../../config";
 import NavButtons from "../lib/NavButtons";
 import Assets from "../Assets";
 import "react-datepicker/dist/react-datepicker.css";
-import { STORY_TYPES } from "../../resources";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+
+const reorder = (list, startIndex, endIndex) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
+const getItemStyle = (isDragging, draggableStyle) => ({
+  // some basic styles to make the items look a bit nicer
+  userSelect: "none",
+  // change background colour if dragging
+  background: isDragging ? "lightgrey" : "transparent",
+
+  // styles we need to apply on draggables
+  ...draggableStyle
+});
 
 export default class StoryEditor extends Component {
   constructor(props) {
@@ -25,6 +44,8 @@ export default class StoryEditor extends Component {
       currentPosition: null,
       showEditTitle: false
     };
+
+    this.onDragEnd = this.onDragEnd.bind(this);
     this.getStoryById = this.getStoryById.bind(this);
     this.handleTitleTyping = this.handleTitleTyping.bind(this);
   }
@@ -37,6 +58,40 @@ export default class StoryEditor extends Component {
     this.handleAssetClick = this.handleAssetClick.bind(this);
     this.handleAnnotation = this.handleAnnotation.bind(this);
     this.setIframe = this.setIframe.bind(this);
+  }
+
+  onDragEnd(result) {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    console.log(result);
+
+    const chapters = reorder(
+      this.state.story.chapters,
+      result.source.index + 1, // increment by due to fixed intro position
+      result.destination.index + 1 // increment by due to fixed intro position
+    );
+
+    const promises = chapters.map((chapter, index) => {
+      const payload = { ...chapter, sort: index + 1 };
+      return updateData(
+        ENDPOINT.STORIES + `/${this.state.story.id}/chapters/${chapter.id}`,
+        payload
+      );
+    });
+
+    Promise.all(promises).catch(ex => {
+      console.log("Failed to update position");
+    });
+
+    this.setState({
+      story: {
+        ...this.state.story,
+        chapters
+      }
+    });
   }
 
   handleTitleTyping(e) {
@@ -82,6 +137,9 @@ export default class StoryEditor extends Component {
 
   handleNewChapter = id => {
     const chapter = this.state.story.chapters.find(x => x.id === id);
+    const lastSort = this.state.story.chapters[
+      this.state.story.chapters.length - 1
+    ].sort;
     if (!id) {
       this.setState({
         story: {
@@ -93,9 +151,11 @@ export default class StoryEditor extends Component {
               title: "",
               description: "",
               position: "",
+              target: "",
               assets: [],
               startDate: "",
-              endDate: ""
+              endDate: "",
+              sort: lastSort + 1
             }
           ]
         }
@@ -104,7 +164,8 @@ export default class StoryEditor extends Component {
     this.setState({
       currentChapterId: chapter ? chapter.id : -1,
       showEdit: true,
-      currentPosition: chapter ? chapter.position : null
+      currentPosition: chapter ? chapter.position : null,
+      currentTarget: chapter ? chapter.target : null
     });
   };
 
@@ -148,13 +209,16 @@ export default class StoryEditor extends Component {
         title: currentChapter.title,
         description: currentChapter.description,
         position: currentChapter.position,
+        target: currentChapter.target,
         startDate: currentChapter.startDate,
-        endDate: currentChapter.endDate
+        endDate: currentChapter.endDate,
+        sort: currentChapter.sort
       };
       postData(ENDPOINT.STORIES + `/${this.state.story.id}/chapters`, payload)
         .then(data => {
           this.setState({ showEdit: false });
           this.setState({ currentPosition: null });
+          this.setState({ currentTarget: null });
           if (!currentChapter.assets[0])
             return this.getStoryById(this.state.story.id);
           const payload = { ...currentChapter.assets[0] };
@@ -178,8 +242,10 @@ export default class StoryEditor extends Component {
         title: currentChapter.title,
         description: currentChapter.description,
         position: currentChapter.position,
+        target: currentChapter.target,
         startDate: currentChapter.startDate,
-        endDate: currentChapter.endDate
+        endDate: currentChapter.endDate,
+        sort: currentChapter.sort
       };
       updateData(
         ENDPOINT.STORIES +
@@ -189,6 +255,7 @@ export default class StoryEditor extends Component {
         .then(data => {
           this.setState({ showEdit: false });
           this.setState({ currentPosition: null });
+          this.setState({ currentTarget: null });
           if (!currentChapter.assets[0])
             return this.getStoryById(this.state.story.id);
 
@@ -274,6 +341,7 @@ export default class StoryEditor extends Component {
           "click",
           info => {
             // this.handleObjectClick(api, info)
+            //console.log(info)
             const chapterIndex = this.state.story.chapters.findIndex(
               x => x.id === this.state.currentChapterId
             );
@@ -281,11 +349,14 @@ export default class StoryEditor extends Component {
 
             if (info.position3D && currentChapter) {
               const position = info.position3D;
+              let target = [0, 0, 0];
               // Annotation is already set, need to update
               if (currentChapter.position) {
                 api.removeAnnotation(chapterIndex - 1); // First chapter is the intro
               }
               api.getCameraLookAt((err, camera) => {
+                console.log("getCameraLookAt");
+                console.log(camera);
                 if (position)
                   api.createAnnotation(
                     position,
@@ -295,25 +366,41 @@ export default class StoryEditor extends Component {
                     currentChapter.title,
                     currentChapter.description
                   );
+
+                target[0] = camera.position[0];
+                target[1] = camera.position[1];
+                target[2] = camera.position[2];
+                console.log(target);
+
+                currentChapter.position = JSON.stringify([
+                  info.position3D[0],
+                  info.position3D[1],
+                  info.position3D[2]
+                ]);
+                currentChapter.target = JSON.stringify([
+                  target[0],
+                  target[1],
+                  target[2]
+                ]);
+
+                console.log("currentChapter");
+                console.log(currentChapter);
+
+                // this.handleAnnotation(api, info)
+                this.setState(prevState => ({
+                  currentPosition: info.position3D,
+                  currentTarget: target,
+                  story: {
+                    ...prevState.story,
+                    chapters: prevState.story.chapters.map(chapter => {
+                      if (chapter.id === this.state.currentChapterId) {
+                        return currentChapter;
+                      }
+                      return chapter;
+                    })
+                  }
+                }));
               });
-              currentChapter.position = JSON.stringify([
-                info.position3D[0],
-                info.position3D[1],
-                info.position3D[2]
-              ]);
-              // this.handleAnnotation(api, info)
-              this.setState(prevState => ({
-                currentPosition: info.position3D,
-                story: {
-                  ...prevState.story,
-                  chapters: prevState.story.chapters.map(chapter => {
-                    if (chapter.id === this.state.currentChapterId) {
-                      return currentChapter;
-                    }
-                    return chapter;
-                  })
-                }
-              }));
             }
           },
           { pick: "slow" }
@@ -335,6 +422,7 @@ export default class StoryEditor extends Component {
 
       api.getCameraLookAt((err, camera) => {
         const position = JSON.parse(chapter.position);
+        //const target = JSON.parse(chapter.target);
         if (position)
           api.createAnnotation(
             position,
@@ -403,42 +491,89 @@ export default class StoryEditor extends Component {
       }
     };
 
-    const getSlides = chapters => {
-      let sortedChapters = [];
-      if (chapters.length > 0) {
-        const intro = chapters[0];
+    const getSlides = () => {
+      const chapters = safeArray(unwrap(this.state.story, "chapters"));
+      let sortedChapters = chapters.slice(1);
+      const intro = chapters[0];
+      if (chapters.length > 0 && story.category === 3) {
         sortedChapters = chapters.reverse();
         sortedChapters.pop(); // Remove intro from the end
         sortedChapters.unshift(intro); // Add intro at the top
       }
-
-      const items = sortedChapters.map(ch => {
-        return (
-          <li key={ch.id} style={{ display: "flex" }} className="m-2">
+      return (
+        <Fragment>
+          <div className="d-flex p-2">
             <button className="btn btn-link body-primary p-2 mr-auto">
-              {ch.title}
+              {unwrap(intro, "title")}
             </button>
             <Button
-              onClick={() => this.handleNewChapter(ch.id)}
+              onClick={() => this.handleNewChapter(unwrap(intro))}
               className="btn btn-primary"
             >
               Edit
             </Button>
-          </li>
-        );
-      });
-      items.push(
-        <li key={-2} style={{ display: "flex" }} className="m-2">
-          <Button
-            disabled={story && story.chapters.find(x => x.id === -1)}
-            onClick={() => this.handleNewChapter(null)}
-            className="btn btn-secondary ml-auto"
-          >
-            Add {getSlideText(story.category)}
-          </Button>
-        </li>
+          </div>
+          <DragDropContext onDragEnd={this.onDragEnd}>
+            <Droppable droppableId="droppable">
+              {(provided, snapshot) => {
+                return (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {sortedChapters
+                      .map(chapter => {
+                        return {
+                          id: `item-${chapter.id}`,
+                          content: chapter
+                        };
+                      })
+                      .map((item, index) => (
+                        <Draggable
+                          key={item.id}
+                          draggableId={item.id}
+                          index={index}
+                        >
+                          {(provided, snapshot) => (
+                            <div
+                              className="d-flex p-2"
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              style={getItemStyle(
+                                snapshot.isDragging,
+                                provided.draggableProps.style
+                              )}
+                            >
+                              <button className="btn btn-link body-primary p-2 mr-auto">
+                                {item.content.title}
+                              </button>
+                              <Button
+                                onClick={() =>
+                                  this.handleNewChapter(item.content.id)
+                                }
+                                className="btn btn-primary"
+                              >
+                                Edit
+                              </Button>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                    {provided.placeholder}
+                  </div>
+                );
+              }}
+            </Droppable>
+          </DragDropContext>
+          <div className="d-flex p-2">
+            <Button
+              disabled={story && story.chapters.find(x => x.id === -1)}
+              onClick={() => this.handleNewChapter(null)}
+              className="btn btn-secondary ml-auto"
+            >
+              Add {getSlideText(unwrap(story, "category"))}
+            </Button>
+          </div>
+        </Fragment>
       );
-      return items;
     };
 
     const getChapterAssets = () => {
@@ -488,6 +623,7 @@ export default class StoryEditor extends Component {
         story.category === 2 &&
         story.chapters[0].assets[0].embedUrl &&
         !this.state.currentPosition &&
+        !this.state.currentTarget &&
         this.state.currentChapterId !== this.state.story.chapters[0].id
       ) {
         return false;
@@ -499,10 +635,7 @@ export default class StoryEditor extends Component {
     };
 
     const canDelete = () => {
-      if (this.state.currentChapterId === this.state.story.chapters[0].id) {
-        return false;
-      }
-      return true;
+      return this.state.currentChapterId !== this.state.story.chapters[0].id;
     };
 
     const getRequiredInputDescription = () => {
@@ -522,7 +655,8 @@ export default class StoryEditor extends Component {
       if (
         story.category === 2 &&
         story.chapters[0].assets[0].embedUrl &&
-        !this.state.currentPosition
+        !this.state.currentPosition &&
+        !this.state.currentTarget
       )
         return (
           <div className="text-danger">
@@ -649,7 +783,7 @@ export default class StoryEditor extends Component {
             <Col md={6} className="p-3">
               {getIntroPreview()}
             </Col>
-            <Col className="p-3">{story && getSlides(story.chapters)}</Col>
+            <Col className="p-3">{getSlides()}</Col>
             {showEdit && (
               <Col>
                 <Form.Group>
