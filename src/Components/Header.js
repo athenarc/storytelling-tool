@@ -77,7 +77,7 @@ export default function Header({ isAuth }) {
         }
         const hash = md5(userPassword.password)
         setUserPassword(hash)
-        postData(ENDPOINT.USERS + `/${userObj.id}/password`, userPassword.password)
+        postData(ENDPOINT.USERS + `/${userObj.id}/passwd`, {"password": userPassword.password } )
             .then((data) => {
                 handleCloseModalPassword();
             })
